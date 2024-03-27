@@ -1,46 +1,21 @@
-# Getting Started with Create React App
+# Al clonar el proyecto deben:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+    > asegurar que estan en su branch
+    > abrir un terminal integrado o uno externo
+    > navegar a la carpeta que contiene App.tsx
+        > cd .. (IOS para volver de directorio)
+        > cd.. (Windows para volver de directorio) ** no estoy 100% seguro **
+    > una vez dentro de la carpeta que contiene App.tsx deben ejecutar:
+        > npm install
+    > una carpeta "node_modules" se autogenera en el explorador de carpetas
+    > luego de eso deben ejecutar:
+        > npm start
+    > se les abrira el proyecto React Typescript que corre en el puerto (habitualmente)
+        > http://192.168.2.16:3000
+        > http://localhost:3000/
 
-## Available Scripts
+# Iniciar un proyecto react typescrip
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+    > npx create-react-app my-app --template typescript
+    > cd my-app
+    > npm start
