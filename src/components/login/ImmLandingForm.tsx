@@ -1,5 +1,7 @@
+// ImmLandingForm.tsx
 import React, { useState } from 'react';
-import './imm_login.css';
+import { Link } from 'react-router-dom';
+import './imm_login.css'; // Assuming Bootstrap CSS is already imported
 
 export const ImmLandingForm = () => {
     const [email, setEmail] = useState('');
@@ -49,32 +51,39 @@ export const ImmLandingForm = () => {
         <div className="login-container">
             <form className="login-form" onSubmit={handleLogin}>
                 <h2 className="form-title">Login</h2>
-                <div className="form-group">
+                <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
                     <input
                         type="email"
                         id="email"
-                        className="form-input"
+                        className="form-control"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
-                <div className="form-group">
+                <div className="mb-3">
                     <label htmlFor="password" className="form-label">Password</label>
                     <input
                         type="password"
                         id="password"
-                        className="form-input"
+                        className="form-control"
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                {error && <div className="error-message">{error}</div>}
-                <button type="submit" className="form-button" disabled={loading}>
-                    {loading ? 'Logging in...' : 'Login'}
-                </button>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <div className="d-grid gap-2">
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+                        {loading ? 'Logging in...' : 'Login'}
+                    </button>
+                </div>
+                <div className="mt-3 text-center">
+                    <Link to="/signup" >Register</Link>
+                    <span className="mx-2">or</span>
+                    <Link to="/">Go back to Landing Page</Link>
+                </div>
             </form>
         </div>
     );
