@@ -1,6 +1,7 @@
 // LandingPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Ejemplo } from '../../components/cards/Ejemplo';
 import './imm_landing.css'
 
 export const ImmLanding = () => {
@@ -13,6 +14,13 @@ export const ImmLanding = () => {
                 <Link to="/login" className="btn btn-primary">Login</Link>
                 <Link to="/signup" className="btn btn-secondary">Sign Up</Link>
             </div>
+            <br />
+            <br />
+            <br />
+            <hr />
+            <Ejemplo />
+
+
         </div>
     );
 }
