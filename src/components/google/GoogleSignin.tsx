@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
+import { useUser } from "../../hooks/useUser";
+import { User } from "../../interfaces/UserInterface";
 
 declare global {
   interface Window {
@@ -9,6 +10,21 @@ declare global {
 }
 
 export const GoogleSignIn = () => {
+
+  const [userModel, setUserModel] = useState<User>(
+    {
+      email: '',
+      google: true,
+      img: '',
+      name: '',
+      status: true,
+      uid: ''
+    }
+  )
+  const { onAddUserLoggedToGlobalAppState } = useUser()
+
+
+
   function handleCredentialResponse(response: any) {
     const { user, token } = response; // Assuming response contains user and token
     console.log("User:", user); // Log user information
@@ -29,8 +45,14 @@ export const GoogleSignIn = () => {
       .then((resp) => {
         console.log("Server response:", resp); // Log server response
 
+        setUserModel(user)
+        onAddUserLoggedToGlobalAppState(userModel)
+
+
+        console.log(userModel + " USER MODEL")
         // TODO -> Set User's logged info to redux 
         /** - USER MODEL ----
+         * const usuario = 
          * user: 
             email:"dmramirez22@gmail.com"
             google:true
@@ -39,6 +61,8 @@ export const GoogleSignIn = () => {
             status:true
             uid:"66117c3afd706bbcaafbf04d"
          */
+
+
         localStorage.setItem('email', resp.user.email)
       })
       .catch(console.warn);

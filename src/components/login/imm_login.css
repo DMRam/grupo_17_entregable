@@ -62,3 +62,9 @@
   color: #ff0000;
   font-size: 0.9rem;
 }
+.login-container {
+  background-image: url("https://wallpaperaccess.com/full/1704828.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; /* Optional: Ensures the background image covers the entire body */
+}

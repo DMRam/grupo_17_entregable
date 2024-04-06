@@ -20,7 +20,6 @@ export const ImmLanding = () => {
             <hr />
             {/* <GoogleSignIn /> */}
 
-
         </div>
     );
 }

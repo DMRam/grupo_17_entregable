@@ -1,6 +1,7 @@
 // ImmLandingForm.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useUser } from '../../hooks/useUser';
 import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
 
@@ -9,6 +10,7 @@ export const ImmLandingForm = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const { userLoggedGlobal } = useUser()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -33,6 +35,8 @@ export const ImmLandingForm = () => {
             setLoading(false);
         }
     };
+
+    console.log(userLoggedGlobal.name + " userLoggedGlobal.name")
 
     const login = async (email: string, password: string) => {
         // Simulate API call or actual login logic
@@ -81,13 +85,14 @@ export const ImmLandingForm = () => {
                     <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
-                    
+
                 </div>
                 <GoogleSignIn />
                 <div className="text-center">
                     <Link to="/signup" className="link">Register</Link>
                     <span className="mx-2">or</span>
                     <Link to="/" className="link">Go back to Landing Page</Link>
+                    <h1>{userLoggedGlobal.name}</h1>
                 </div>
             </form>
         </div>
