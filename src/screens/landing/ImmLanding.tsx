@@ -1,7 +1,7 @@
 // LandingPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Ejemplo } from '../../components/cards/Ejemplo';
+import { GoogleSignIn } from '../../components/google/GoogleSignin';
 import './imm_landing.css'
 
 export const ImmLanding = () => {
@@ -18,7 +18,7 @@ export const ImmLanding = () => {
             <br />
             <br />
             <hr />
-            <Ejemplo />
+            {/* <GoogleSignIn /> */}
 
 
         </div>

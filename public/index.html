@@ -53,7 +53,7 @@
     />
 
     <!-- Bootstrap - end -->
-
+    <script src="https://accounts.google.com/gsi/client" async></script>
     <title>Immobilier - G17</title>
   </head>
   <body>
@@ -69,5 +69,28 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <!-- <script>
+      function handleCredentialResponse(response) {
+        const body = { id_token: response.credential };
+        fetch("http://localhost:8080/api/auth/google", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        })
+          .then((resp) => resp.json())
+          .then((resp) => {
+            console.log(resp);
+          })
+          .catch(console.warn);
+      }
+
+      const buttonToSignOut = document.getElementById("google-signout");
+      buttonToSignOut.onclick = () => {
+        console.log(google.accounts.id);
+      };
+    </script> -->
   </body>
 </html>

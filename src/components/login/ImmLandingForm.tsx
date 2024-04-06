@@ -1,6 +1,7 @@
 // ImmLandingForm.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
 
 export const ImmLandingForm = () => {
@@ -51,38 +52,42 @@ export const ImmLandingForm = () => {
         <div className="login-container">
             <form className="login-form" onSubmit={handleLogin}>
                 <h2 className="form-title">Login</h2>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="email">Email</label>
                     <input
                         type="email"
-                        id="email"
                         className="form-control"
+                        id="email"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="password">Password</label>
                     <input
                         type="password"
-                        id="password"
                         className="form-control"
+                        id="password"
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <div className="d-grid gap-2">
-                    <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+                <div className="d-grid gap-2 mb-3">
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
+                    
                 </div>
-                <div className="mt-3 text-center">
-                    <Link to="/signup" >Register</Link>
+                <GoogleSignIn />
+                <div className="text-center">
+                    <Link to="/signup" className="link">Register</Link>
                     <span className="mx-2">or</span>
-                    <Link to="/">Go back to Landing Page</Link>
+                    <Link to="/" className="link">Go back to Landing Page</Link>
                 </div>
             </form>
         </div>

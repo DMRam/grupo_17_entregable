@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ImmLandingForm } from './components/login/ImmLandingForm';
-import { ImmSigup } from './components/login/ImmSigup';
 import { ImmLanding } from './screens/landing/ImmLanding';
 import './App.css'
+import { ImmSignUp } from './components/login/ImmSigup';
 
 export const App = () => {
   return (
@@ -11,7 +11,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<ImmLanding />} />
         <Route path="/login" element={<ImmLandingForm />} />
-        <Route path="/signup" element={<ImmSigup />} />
+        <Route path="/signup" element={<ImmSignUp />} />
       </Routes>
     </BrowserRouter>
   );
