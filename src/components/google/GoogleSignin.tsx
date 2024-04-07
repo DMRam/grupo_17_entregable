@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
 import { useAuthentication } from "../../hooks/useAuthentication";
 import { useUser } from "../../hooks/useUser";
-import { User } from "../../interfaces/UserInterface";
 
 declare global {
   interface Window {
