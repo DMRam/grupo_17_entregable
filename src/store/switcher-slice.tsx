@@ -19,7 +19,7 @@ const userLogged: User =
 
 
 const initialState = {
-    isVisible: false,
+    isLoggedOut: true,
     metaDataLoginTrigger: false,
     metaDataSignUpTrigger: false,
     userLogged
@@ -29,8 +29,8 @@ const sliceMenu = createSlice({
     name: "ui",
     initialState,
     reducers: {
-        toggleBoolean(state) {
-            state.isVisible = !state.isVisible;
+        toggleLoggedOut(state) {
+            state.isLoggedOut = !state.isLoggedOut;
         },
         addUserLogged(state, action) {
             state.userLogged = action.payload
@@ -45,7 +45,7 @@ const sliceMenu = createSlice({
     },
 });
 
-export const { toggleBoolean, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp } =
+export const { toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp } =
     sliceMenu.actions;
 export const selectUI = (state: RootState) => state.ui;
 

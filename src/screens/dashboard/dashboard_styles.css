@@ -1,0 +1,20 @@
+/* dashboard_styles.css */
+
+/* Common styles */
+.dashboard {
+  padding: 20px;
+}
+
+/* Styles for smaller screens */
+@media screen and (max-width: 576px) {
+  .layout .react-grid-item {
+    width: 100%; /* Use full width */
+    margin-bottom: 10px; /* Adjust margin for better spacing */
+    box-shadow: 0 4px 8px rgba(63, 129, 242, 0.2); /* Add box shadow */
+    /* Adjust other styles for smaller screens */
+  }
+  .layout .react-grid-item > div {
+    padding: 15px; /* Adjust padding */
+    /* Adjust other styles for smaller screens */
+  }
+}

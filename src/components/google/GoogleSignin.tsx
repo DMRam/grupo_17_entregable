@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
+import { useAuthentication } from "../../hooks/useAuthentication";
 import { useUser } from "../../hooks/useUser";
 import { User } from "../../interfaces/UserInterface";
 
@@ -10,30 +12,16 @@ declare global {
 }
 
 export const GoogleSignIn = () => {
-
-  const [userModel, setUserModel] = useState<User>(
-    {
-      email: '',
-      google: true,
-      img: '',
-      name: '',
-      status: true,
-      uid: ''
-    }
-  )
   const { onAddUserLoggedToGlobalAppState } = useUser()
+  const navigate = useNavigate()
+  const { onUserLoggingOut } = useAuthentication()
 
-
-
-  function handleCredentialResponse(response: any) {
-    const { user, token } = response; // Assuming response contains user and token
-    console.log("User:", user); // Log user information
-    console.log("Token:", token); // Log token
-    console.log("Handling response:", response); // Add this log to check if function is called
+  const handleCredentialResponse = (response: any) => {
+    const { user, token } = response;
+    console.log("User:", user);
+    console.log("Token:", token);
+    console.log("Handling response:", response);
     const body = { id_token: response.credential };
-    // https://grupo-17-418915.uc.r.appspot.com
-    // https://backend-express-hc75.onrender.com/
-    // http://localhost:8080
     fetch("https://grupo-17-418915.uc.r.appspot.com/api/auth/google", {
       method: "POST",
       headers: {
@@ -43,36 +31,19 @@ export const GoogleSignIn = () => {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log("Server response:", resp); // Log server response
+        console.log("Server response:", resp);
+        onAddUserLoggedToGlobalAppState(resp.user); // Call the custom hook to update user data globally
 
-        setUserModel(user)
-        onAddUserLoggedToGlobalAppState(userModel)
-
-
-        console.log(userModel + " USER MODEL")
-        // TODO -> Set User's logged info to redux 
-        /** - USER MODEL ----
-         * const usuario = 
-         * user: 
-            email:"dmramirez22@gmail.com"
-            google:true
-            img:"https://lh3.googleusercontent.com/a/ACg8ocLC5cxIPHW0_zMQUUCHGQ8Ax4Yc3utVehJ_fDRwvpBCGhCxlg=s96-c"
-            name:"Danny Muñoz"
-            status:true
-            uid:"66117c3afd706bbcaafbf04d"
-         */
-
-
-        localStorage.setItem('email', resp.user.email)
+        onUserLoggingOut()
+        localStorage.setItem('email', resp.user.email);
+        navigate('/dashboard');
       })
       .catch(console.warn);
   }
 
-
-  // This function have to be called from sign out option within the menu
   const handleSignOut = () => {
     console.log("Sign out clicked");
-    console.log(window.google.accounts.id)
+    console.log(window.google.accounts.id);
     window.google.accounts.id.revoke(localStorage.getItem('email'), (done: any) => {
       localStorage.clear();
       window.location.reload();

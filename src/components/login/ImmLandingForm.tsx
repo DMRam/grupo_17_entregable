@@ -1,6 +1,6 @@
 // ImmLandingForm.tsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/useUser';
 import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
@@ -11,6 +11,8 @@ export const ImmLandingForm = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { userLoggedGlobal } = useUser()
+    const navigate = useNavigate(); // Initialize useHistory with type History
+
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -26,8 +28,9 @@ export const ImmLandingForm = () => {
 
         try {
             // Simulate API call or actual login logic
-            await login(email, password);
-            // Navigate to dashboard or next page on successful login
+            // await login(email, password);
+            // Navigate to dashboard on successful login
+            navigate('/dashboard'); // Navigate to the dashboard using useNavigate
             console.log('Login successful');
         } catch (error) {
             setError('Invalid email or password. Please try again.');

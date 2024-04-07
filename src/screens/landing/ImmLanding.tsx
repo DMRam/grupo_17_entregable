@@ -2,9 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleSignIn } from '../../components/google/GoogleSignin';
+import { useAuthentication } from '../../hooks/useAuthentication';
 import './imm_landing.css'
 
 export const ImmLanding = () => {
+    
+
     return (
         <div className="landing-page">
             <h1>Bienvenido a Immobilier</h1>
