@@ -1,6 +1,7 @@
-// ImmLandingForm.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axiosInstanceAuth from '../../api/axios/ImmAxios';
+import { useAuthentication } from '../../hooks/useAuthentication';
 import { useUser } from '../../hooks/useUser';
 import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
@@ -10,50 +11,31 @@ export const ImmLandingForm = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const { userLoggedGlobal } = useUser()
+    const { userLoggedGlobal } = useUser();
     const navigate = useNavigate(); // Initialize useHistory with type History
-
+    const { onUserLoggingOut } = useAuthentication()
+    const { onAddUserLoggedToGlobalAppState } = useUser()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        // Basic email validation
-        if (!email.trim() || !password.trim()) {
-            setError('Please enter both email and password.');
-            return;
-        }
-
-        setLoading(true);
-        setError('');
+        setLoading(true); // Start loading
 
         try {
-            // Simulate API call or actual login logic
-            // await login(email, password);
-            // Navigate to dashboard on successful login
-            navigate('/dashboard'); // Navigate to the dashboard using useNavigate
-            console.log('Login successful');
+            const credentials = { email, password }; // Prepare credentials for login
+            const response = await axiosInstanceAuth.post('/auth/login', credentials);
+            console.log(response.data + ' - Login successful');
+            onAddUserLoggedToGlobalAppState(response.data.user)
+            onUserLoggingOut()
+            navigate('/dashboard'); // Redirect to dashboard after successful login
         } catch (error) {
-            setError('Invalid email or password. Please try again.');
+            console.error('Failed to login:', error);
+            setError('Invalid email or password'); // Set error message for failed login
         } finally {
-            setLoading(false);
+            setLoading(false); // Stop loading regardless of success or failure
         }
     };
 
-    console.log(userLoggedGlobal.name + " userLoggedGlobal.name")
-
-    const login = async (email: string, password: string) => {
-        // Simulate API call or actual login logic
-        return new Promise<void>((resolve, reject) => {
-            setTimeout(() => {
-                // Resolve or reject based on login result
-                if (email === 'user@example.com' && password === 'password') {
-                    resolve();
-                } else {
-                    reject();
-                }
-            }, 1500); // Simulate delay for API call
-        });
-    };
+    console.log(userLoggedGlobal.name + ' userLoggedGlobal.name');
 
     return (
         <div className="login-container">
@@ -88,13 +70,16 @@ export const ImmLandingForm = () => {
                     <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
-
                 </div>
                 <GoogleSignIn />
                 <div className="text-center">
-                    <Link to="/signup" className="link">Register</Link>
+                    <Link to="/signup" className="link">
+                        Register
+                    </Link>
                     <span className="mx-2">or</span>
-                    <Link to="/" className="link">Go back to Landing Page</Link>
+                    <Link to="/" className="link">
+                        Go back to Landing Page
+                    </Link>
                     <h1>{userLoggedGlobal.name}</h1>
                 </div>
             </form>

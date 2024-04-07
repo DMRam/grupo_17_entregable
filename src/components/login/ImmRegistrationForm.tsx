@@ -1,7 +1,7 @@
 // ImmRegistrationForm.tsx
 import axios from 'axios';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import './imm_registration.css'; // Import your CSS file for styling
 
 export const ImmRegistrationForm = () => {
@@ -13,6 +13,7 @@ export const ImmRegistrationForm = () => {
   });
   const [error, setError] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -69,6 +70,7 @@ export const ImmRegistrationForm = () => {
       });
       setRepeatPassword('');
       setError('');
+      navigate('/login')
     } catch (error) {
       console.error('Error submitting form:', error);
       setError('Error submitting form. Please try again.');
