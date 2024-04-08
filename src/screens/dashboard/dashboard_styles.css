@@ -3,6 +3,16 @@
 /* Common styles */
 .dashboard {
   padding: 20px;
+  margin-top: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  background-image: url("https://wallpaperaccess.com/full/1704828.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* Styles for smaller screens */

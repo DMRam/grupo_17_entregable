@@ -1,5 +1,6 @@
 body {
-  background-image: url("https://wallpaperaccess.com/full/1704828.jpg");
+  /* background-image: url("https://wallpaperaccess.com/full/1704828.jpg"); */
+  background-color: rgb(198, 221, 245);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover; /* Optional: Ensures the background image covers the entire body */
