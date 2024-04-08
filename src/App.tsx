@@ -7,12 +7,11 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { ProtectedRoute } from './screens/protected/ProtectedRoute';
 import { ImmRegistrationForm } from './components/login/ImmRegistrationForm';
+import { CreateView } from './screens/new/CreateView';
 
 
 export const App = () => {
 
-
-  
   return (
     <BrowserRouter>
       <Provider store={store}>
@@ -22,6 +21,7 @@ export const App = () => {
           <Route path="/signup" element={<ImmRegistrationForm />} />
           {/* <Route path="/dashboard" element={<ImmDashboard />} /> */}
           <Route path="/dashboard" element={<ProtectedRoute />} />
+          <Route path="/create_view" element={<CreateView />} />
         </Routes>
       </Provider>
     </BrowserRouter>
