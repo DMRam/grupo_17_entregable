@@ -12,9 +12,15 @@ import {
     SideNavItems,
     HeaderSideNavItems,
     SideNavMenuItem,
+    Link,
+    SideNavLinkText,
+    SideNavDivider,
+    SideNavHeader,
+    SideNavMenu
 } from '@carbon/react';
-import { Switcher, Notification, UserAvatar } from '@carbon/icons-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { TrashCan, Switcher, Notification, UserAvatar, NonCertified } from '@carbon/icons-react';
+import './carbon_header.scss'
+// import { Link, useNavigate } from 'react-router-dom';
 interface Props {
     name: string
 }
@@ -33,11 +39,9 @@ export const CarbonHeader = ({ name }: Props) => (
                 <HeaderName href="/" prefix="Immobilier">
                     {name}
                 </HeaderName>
-                <Link to="/dashboard">
+                {/* <Link to="/dashboard">
                     <HeaderNavigation aria-label="Home">
-
                         <HeaderMenuItem>Home</HeaderMenuItem>
-
                     </HeaderNavigation>
                 </Link>
                 <Link to="/create_view">
@@ -59,23 +63,44 @@ export const CarbonHeader = ({ name }: Props) => (
                     <HeaderNavigation aria-label="Logout">
                         <HeaderMenuItem href="/repos">Logout</HeaderMenuItem>
                     </HeaderNavigation>
-                </Link>
+                </Link> */}
 
                 <SideNav
                     aria-label="Side navigation"
                     expanded={isSideNavExpanded}
                     isPersistent={false}
                 >
-
                     <SideNavItems>
+
+                        {/* <SideNavHeader ></SideNavHeader> */}
+                        <div style={{ marginLeft: 15 }}>Immobilier  </div>
+                        <SideNavDivider />
+
+                        <SideNavMenu title={'Nuevo'}>
+                            <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                Nuevo Arriendo
+                            </SideNavMenuItem>
+                            <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                Nuevo Cliente
+                            </SideNavMenuItem>
+                            <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                Nueva Propiedad
+                            </SideNavMenuItem>
+                            <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                Nuevo Arrendatario
+                            </SideNavMenuItem>
+                        </SideNavMenu>
+                        <SideNavMenu title={'Analítica'}>
+
+
+                        </SideNavMenu>
+                        <SideNavMenu title={'Reportes'}>
+
+
+                        </SideNavMenu>
+                        <SideNavDivider />
                         <SideNavMenuItem onClick={() => { }} >
-                            About
-                        </SideNavMenuItem>
-                        <SideNavMenuItem onClick={() => { }} >
-                            Services
-                        </SideNavMenuItem>
-                        <SideNavMenuItem onClick={() => { }} >
-                            Contact
+                            Logout
                         </SideNavMenuItem>
                     </SideNavItems>
 

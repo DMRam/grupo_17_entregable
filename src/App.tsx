@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { ProtectedRoute } from './screens/protected/ProtectedRoute';
 import { ImmRegistrationForm } from './components/login/ImmRegistrationForm';
+import {  GridView } from './screens/new/GridView';
 import { CreateView } from './screens/new/CreateView';
 
 
@@ -21,7 +22,8 @@ export const App = () => {
           <Route path="/signup" element={<ImmRegistrationForm />} />
           {/* <Route path="/dashboard" element={<ImmDashboard />} /> */}
           <Route path="/dashboard" element={<ProtectedRoute />} />
-          <Route path="/create_view" element={<CreateView />} />
+          <Route path="/create_view" element={<GridView />} />
+          <Route path="/create_view_ii" element={<CreateView />} />
         </Routes>
       </Provider>
     </BrowserRouter>
