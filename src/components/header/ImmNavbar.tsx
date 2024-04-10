@@ -15,7 +15,7 @@ declare global {
 }
 export const ImmNavbar = ({ name }: Props) => {
     const navigate = useNavigate()
-    const { onUserLoggingOut } = useAuthentication()
+    const { onUserLoggingOut, isUserLoggedOut } = useAuthentication()
     const [showMenu, setShowMenu] = useState(false);
 
     const toggleMenu = () => setShowMenu(!showMenu);
@@ -55,7 +55,10 @@ export const ImmNavbar = ({ name }: Props) => {
         }
 
         // Make this true
-        onUserLoggingOut();
+        if (!isUserLoggedOut) {
+            onUserLoggingOut();
+        }
+
     }
     return (
         <Navbar bg="dark" variant="dark" expand="lg">

@@ -10,6 +10,7 @@ export const useAuthentication = () => {
 
 
     const onUserLoggingOut = () => {
+        
         dispatch(toggleLoggedOut())
     }
     return {

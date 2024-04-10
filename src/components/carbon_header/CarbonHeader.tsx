@@ -18,28 +18,85 @@ import {
     SideNavHeader,
     SideNavMenu
 } from '@carbon/react';
-import { TrashCan, Switcher, Notification, UserAvatar, NonCertified } from '@carbon/icons-react';
+import { TrashCan, Switcher, Notification, UserAvatar, NonCertified, IntentRequestCreate } from '@carbon/icons-react';
 import './carbon_header.scss'
+import { useCreate } from '../../hooks/useCreate';
+import { TabInfo } from '../../interfaces/UserInterface';
+import { CreationForm } from '../forms/CreationForm';
+import { useState } from 'react';
+import TenantCreateForm from '../forms/TenantCreateForm';
+import { useAuthentication } from '../../hooks/useAuthentication';
+import { useNavigate } from 'react-router-dom';
 // import { Link, useNavigate } from 'react-router-dom';
 interface Props {
     name: string
 }
-export const CarbonHeader = ({ name }: Props) => (
-    <HeaderContainer
-        render={({ isSideNavExpanded, onClickSideNavExpand }) => (
-            <Header aria-label="Immobilier">
-                <SkipToContent />
+export const CarbonHeader = ({ name }: Props) => {
 
-                <HeaderMenuButton
-                    aria-label="Open menu"
-                    isCollapsible
-                    onClick={onClickSideNavExpand}
-                    isActive={isSideNavExpanded}
-                />
-                <HeaderName href="/" prefix="Immobilier">
-                    {name}
-                </HeaderName>
-                {/* <Link to="/dashboard">
+    const { onCreateNewTab, addedTab } = useCreate()
+    const [isSideNavExpanded, setIsSideNavExpanded] = useState(false);
+    const { isUserLoggedOut, onUserLoggingOut } = useAuthentication()
+    const navigate = useNavigate()
+
+    const onNewTab = (label:string) => {
+
+
+        const newTenantTab: TabInfo = {
+            label,
+            panel: <TenantCreateForm />, // You can use an empty fragment as a default JSX element
+            icon: () => <IntentRequestCreate />, // You can use an empty fragment as a default icon component
+            disabled: false // or true based on your requirements
+        };
+        // Open new form (Create View) in a new tab - Add to Redux
+        onCreateNewTab(newTenantTab)
+        setIsSideNavExpanded(!isSideNavExpanded);
+    }
+
+    const onLogout = () => {
+        console.log("Sign out clicked");
+        const email = localStorage.getItem('email');
+
+        // Clear specific items related to authentication
+        localStorage.removeItem('token'); // Assuming 'token' is the authentication token key
+        localStorage.removeItem('email'); // Assuming 'user' is the user information key
+
+        // Remove the current page from session history and navigate to login
+        window.history.replaceState(null, '', '/');
+        navigate('/', { replace: true });
+
+        // Reload the page to reflect the logged-out state
+        window.location.reload();
+
+        // Revoke access using Google API
+        if (email) {
+            window.google.accounts.id.revoke(email, (done: any) => {
+                console.log("Google account revoked");
+            });
+        }
+
+        // Make this true
+        if (!isUserLoggedOut) {
+            onUserLoggingOut();
+        }
+
+    }
+
+    return (
+        <HeaderContainer
+            render={() => (
+                <Header aria-label="Immobilier">
+                    <SkipToContent />
+
+                    <HeaderMenuButton
+                        aria-label="Open menu"
+                        isCollapsible
+                        onClick={() => setIsSideNavExpanded(!isSideNavExpanded)}
+                        isActive={isSideNavExpanded}
+                    />
+                    <HeaderName href="/" prefix="Immobilier">
+                        {name}
+                    </HeaderName>
+                    {/* <Link to="/dashboard">
                     <HeaderNavigation aria-label="Home">
                         <HeaderMenuItem>Home</HeaderMenuItem>
                     </HeaderNavigation>
@@ -65,60 +122,60 @@ export const CarbonHeader = ({ name }: Props) => (
                     </HeaderNavigation>
                 </Link> */}
 
-                <SideNav
-                    aria-label="Side navigation"
-                    expanded={isSideNavExpanded}
-                    isPersistent={false}
-                >
-                    <SideNavItems>
+                    <SideNav
+                        aria-label="Side navigation"
+                        expanded={isSideNavExpanded}
+                        isPersistent={false}
+                    >
+                        <SideNavItems>
 
-                        {/* <SideNavHeader ></SideNavHeader> */}
-                        <div style={{ marginLeft: 15 }}>Immobilier  </div>
-                        <SideNavDivider />
+                            {/* <SideNavHeader ></SideNavHeader> */}
+                            <div style={{ marginLeft: 15 }}>Immobilier  </div>
+                            <SideNavDivider />
 
-                        <SideNavMenu title={'Nuevo'}>
-                            <SideNavMenuItem onClick={() => { alert("hi") }} >
-                                Nuevo Arriendo
+                            <SideNavMenu title={'Nuevo'}>
+                                <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                    Nuevo Arriendo
+                                </SideNavMenuItem>
+                                <SideNavMenuItem onClick={() => {  onNewTab('Nuevo Cliente')}} >
+                                    Nuevo Cliente
+                                </SideNavMenuItem>
+                                <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                    Nueva Propiedad
+                                </SideNavMenuItem>
+                                <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arrendatario') }} >
+                                    Nuevo Arrendatario
+                                </SideNavMenuItem>
+                            </SideNavMenu>
+                            <SideNavMenu title={'Analítica'}>
+
+
+                            </SideNavMenu>
+                            <SideNavMenu title={'Reportes'}>
+
+
+                            </SideNavMenu>
+                            <SideNavDivider />
+                            <SideNavMenuItem onClick={onLogout} >
+                                Logout
                             </SideNavMenuItem>
-                            <SideNavMenuItem onClick={() => { alert("hi") }} >
-                                Nuevo Cliente
-                            </SideNavMenuItem>
-                            <SideNavMenuItem onClick={() => { alert("hi") }} >
-                                Nueva Propiedad
-                            </SideNavMenuItem>
-                            <SideNavMenuItem onClick={() => { alert("hi") }} >
-                                Nuevo Arrendatario
-                            </SideNavMenuItem>
-                        </SideNavMenu>
-                        <SideNavMenu title={'Analítica'}>
+                        </SideNavItems>
 
+                    </SideNav>
+                    <HeaderGlobalBar />
+                    <HeaderGlobalBar>
+                        <HeaderGlobalAction aria-label="Notifications" tooltipAlignment="center">
+                            <Notification size={20} />
+                        </HeaderGlobalAction>
+                        <HeaderGlobalAction aria-label="User Avatar" tooltipAlignment="center">
+                            <UserAvatar size={20} />
+                        </HeaderGlobalAction>
+                        <HeaderGlobalAction aria-label="App Switcher" tooltipAlignment="end">
+                            <Switcher size={20} />
+                        </HeaderGlobalAction>
+                    </HeaderGlobalBar>
 
-                        </SideNavMenu>
-                        <SideNavMenu title={'Reportes'}>
-
-
-                        </SideNavMenu>
-                        <SideNavDivider />
-                        <SideNavMenuItem onClick={() => { }} >
-                            Logout
-                        </SideNavMenuItem>
-                    </SideNavItems>
-
-                </SideNav>
-                <HeaderGlobalBar />
-                <HeaderGlobalBar>
-                    <HeaderGlobalAction aria-label="Notifications" tooltipAlignment="center">
-                        <Notification size={20} />
-                    </HeaderGlobalAction>
-                    <HeaderGlobalAction aria-label="User Avatar" tooltipAlignment="center">
-                        <UserAvatar size={20} />
-                    </HeaderGlobalAction>
-                    <HeaderGlobalAction aria-label="App Switcher" tooltipAlignment="end">
-                        <Switcher size={20} />
-                    </HeaderGlobalAction>
-                </HeaderGlobalBar>
-
-            </Header>
-        )}
-    />
-);
+                </Header>
+            )}
+        />)
+};

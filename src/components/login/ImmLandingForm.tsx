@@ -13,7 +13,7 @@ export const ImmLandingForm = () => {
     const [error, setError] = useState('');
     const { userLoggedGlobal } = useUser();
     const navigate = useNavigate(); // Initialize useHistory with type History
-    const { onUserLoggingOut } = useAuthentication()
+    const { onUserLoggingOut, isUserLoggedOut } = useAuthentication()
     const { onAddUserLoggedToGlobalAppState } = useUser()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +25,10 @@ export const ImmLandingForm = () => {
             const response = await axiosInstanceAuth.post('/auth/login', credentials);
             console.log(response.data + ' - Login successful');
             onAddUserLoggedToGlobalAppState(response.data.user)
-            onUserLoggingOut()
+            if (isUserLoggedOut) {
+                onUserLoggingOut()
+            }
+
             navigate('/dashboard'); // Redirect to dashboard after successful login
         } catch (error) {
             console.error('Failed to login:', error);

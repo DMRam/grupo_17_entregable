@@ -13,7 +13,7 @@ declare global {
 export const GoogleSignIn = () => {
   const { onAddUserLoggedToGlobalAppState } = useUser()
   const navigate = useNavigate()
-  const { onUserLoggingOut } = useAuthentication()
+  const { onUserLoggingOut, isUserLoggedOut } = useAuthentication()
 
   const handleCredentialResponse = (response: any) => {
     const { user, token } = response;
@@ -32,8 +32,10 @@ export const GoogleSignIn = () => {
       .then((resp) => {
         console.log("Server response:", resp);
         onAddUserLoggedToGlobalAppState(resp.user); // Call the custom hook to update user data globally
+        if (isUserLoggedOut) {
+          onUserLoggingOut()
+        }
 
-        onUserLoggingOut()
         localStorage.setItem('email', resp.user.email);
         navigate('/dashboard');
       })
