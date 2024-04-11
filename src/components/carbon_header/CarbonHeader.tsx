@@ -33,16 +33,13 @@ interface Props {
 }
 export const CarbonHeader = ({ name }: Props) => {
 
-    const { onCreateNewTab, addedTab } = useCreate()
+    const { onCreateNewTab } = useCreate()
     const [isSideNavExpanded, setIsSideNavExpanded] = useState(false);
     const { isUserLoggedOut, onUserLoggingOut } = useAuthentication()
     const navigate = useNavigate()
 
     const onNewTab = (label: string) => {
-
-        
         const newTenantTab: TabInfo = {
-
             label,
             panel: <TenantCreateForm />, // You can use an empty fragment as a default JSX element
             icon: () => <IntentRequestCreate />, // You can use an empty fragment as a default icon component

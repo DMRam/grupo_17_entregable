@@ -23,110 +23,28 @@ import {
   Link,
   Button,
 } from "@carbon/react";
-import { Download, OrderDetails, Save, TrashCan } from "@carbon/icons-react";
+import {
+  Download,
+  OrderDetails,
+  Save,
+  TrashCan,
+  IntentRequestCreate,
+} from "@carbon/icons-react";
 import styles from "./CarbonGrid.module.css"; // Import CSS module
+import TenantCreateForm from "../forms/TenantCreateForm";
+import { useCreate } from "../../hooks/useCreate";
 
-const headerData = [
-  {
-    header: "Name",
-    key: "name",
-  },
-  {
-    header: "Protocol",
-    key: "protocol",
-  },
-  {
-    header: "Port",
-    key: "port",
-  },
-  {
-    header: "Rule",
-    key: "rule",
-  },
-  {
-    header: "Attached groups",
-    key: "attached_groups",
-  },
-  {
-    header: "Status",
-    key: "status",
-  },
-];
-
-const rowData = [
-  {
-    attached_groups: "Kevin’s VM Groups",
-    id: "a",
-    name: "Load Balancer 3",
-    port: 3000,
-    protocol: "HTTP",
-    rule: "Round robin",
-    status: (
-      <Link disabled href="#">
-        Disabled
-      </Link>
-    ),
-  },
-  {
-    attached_groups: "Maureen’s VM Groups",
-    id: "b",
-    name: "Load Balancer 1",
-    port: 443,
-    protocol: "HTTP",
-    rule: "Round robin",
-    status: <Link href="#">Starting</Link>,
-  },
-  {
-    attached_groups: "Andrew’s VM Groups",
-    id: "c",
-    name: "Load Balancer 2",
-    port: 80,
-    protocol: "HTTP",
-    rule: "DNS delegation",
-    status: <Link href="#">Active</Link>,
-  },
-  {
-    attached_groups: "Marc’s VM Groups",
-    id: "d",
-    name: "Load Balancer 6",
-    port: 3000,
-    protocol: "HTTP",
-    rule: "Round robin",
-    status: (
-      <Link disabled href="#">
-        Disabled
-      </Link>
-    ),
-  },
-  {
-    attached_groups: "Mel’s VM Groups",
-    id: "e",
-    name: "Load Balancer 4",
-    port: 443,
-    protocol: "HTTP",
-    rule: "Round robin",
-    status: <Link href="#">Starting</Link>,
-  },
-  {
-    attached_groups: "Ronja’s VM Groups",
-    id: "f",
-    name: "Load Balancer 5",
-    port: 80,
-    protocol: "HTTP",
-    rule: "DNS delegation",
-    status: <Link href="#">Active</Link>,
-  },
-];
-
-export const CarbonGrid = ({ name }) => {
+export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const initialRows = rowData;
   const initialHeaders = headerData;
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const [state, setState] = useState({
     rows: initialRows,
     headers: initialHeaders,
     id: 0,
   });
+  const { onCreateNewTab, addedTab } = useCreate();
 
   const handleOnHeaderAdd = () => {
     // Add logic for adding header if required
@@ -137,7 +55,7 @@ export const CarbonGrid = ({ name }) => {
   };
 
   const onInputChange = (event) => {
-    const searchTerm = event.target.value.toLowerCase(); // Convert input value to lowercase
+    const searchTerm = event.target.value.toLowerCase();
     setState((prevState) => ({
       ...prevState,
       rows: initialRows.filter((row) =>
@@ -148,6 +66,55 @@ export const CarbonGrid = ({ name }) => {
         )
       ),
     }));
+  };
+
+  const onDeleteSelectedRows = (selectedRows) => {
+    console.log("Selected Rows Before Deletion:", selectedRows.length);
+
+    const updatedRows = state.rows.filter(
+      (row) => !selectedRows.some((selectedRow) => selectedRow.id === row.id)
+    );
+
+
+    console.log("Updated Rows After Deletion:", updatedRows.length);
+
+    setState((prevState) => ({
+      ...prevState,
+      rows: updatedRows,
+    }));
+
+    setSelectedRows((prevSelectedRows) =>
+      prevSelectedRows.filter((selectedRow) =>
+        updatedRows.some((row) => row.id === selectedRow.id)
+      )
+    );
+
+    console.log("Selected Rows After Deletion:", selectedRows);
+  };
+
+  const onCreateNewTabFromNewButton = (objectName) => {
+    let label = "";
+    if (objectName.includes("Arriendo")) {
+      label = "Arriendo";
+    } else if (objectName.includes("Venta")) {
+      label = "Venta";
+    } else if (objectName.includes("Propietario")) {
+      label = "Cliente";
+    } else if (objectName.includes("Arrendatario")) {
+      label = "Arrendatario";
+    }
+    onNewTab(label);
+  };
+
+  const onNewTab = (label) => {
+    const newTenantTab = {
+      label,
+      panel: <TenantCreateForm />,
+      icon: () => <IntentRequestCreate />,
+      disabled: false,
+    };
+    // Open new form (Create View) in a new tab - Add to Redux
+    onCreateNewTab(newTenantTab);
   };
 
   return (
@@ -180,7 +147,7 @@ export const CarbonGrid = ({ name }) => {
                   <TableBatchAction
                     renderIcon={TrashCan}
                     iconDescription="Borrar registro"
-                    onClick={() => {}}
+                    onClick={() => onDeleteSelectedRows(selectedRows)}
                     tabIndex={batchActionProps.shouldShowBatchActions ? 0 : -1}
                   >
                     Borrar
@@ -211,7 +178,14 @@ export const CarbonGrid = ({ name }) => {
                       Add header
                     </TableToolbarAction>
                   </TableToolbarMenu> */}
-                  <Button onClick={() => {}}>Nuevo</Button>
+                  <Button
+                    onClick={() => {
+                      onCreateNewTabFromNewButton(objectName);
+                    }}
+                  >
+                    {objectName}
+                  </Button>{" "}
+                  {/* New Button  */}
                 </TableToolbarContent>
               </TableToolbar>
               <Table {...getTableProps()} aria-label="sample table">
@@ -232,32 +206,45 @@ export const CarbonGrid = ({ name }) => {
                         onClick={(event) => {}}
                         {...getHeaderProps({ header })}
                       >
-                        {header.header}
+                        {header.header != "Content" && header.header}
                       </TableHeader>
                     ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <React.Fragment key={row.id}>
-                      <TableExpandRow {...getRowProps({ row })}>
-                        <TableSelectRow {...getSelectionProps({ row })} />
-                        {row.cells.map((cell) => (
-                          <TableCell key={cell.id}>{cell.value}</TableCell>
-                        ))}
-                      </TableExpandRow>
-                      <TableExpandedRow
-                        colSpan={headers.length + 3}
-                        className="demo-expanded-td"
-                        {...getExpandedRowProps({ row })}
-                      >
-                        <h6>Expandable row content</h6>
-                        <div>Description here</div>
-                      </TableExpandedRow>
-                    </React.Fragment>
-                  ))}
+                  {rows.map((row) => {
+                    return (
+                      <React.Fragment key={row.id}>
+                        <TableExpandRow {...getRowProps({ row })}>
+                          <TableSelectRow {...getSelectionProps({ row })} />
+                          {row.cells.map((cell) => (
+                            <TableCell key={cell.id}>
+                              {!React.isValidElement(cell.value) && (
+                                <div>{cell.value}</div>
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableExpandRow>
+                        <TableExpandedRow
+                          colSpan={headers.length + 3}
+                          className="demo-expanded-td"
+                          {...getExpandedRowProps({ row })}
+                        >
+                          {row.cells.map((cell) => (
+                            // <h6>Expandable row content</h6>
+                            <>
+                              <h6>
+                                {typeof cell.value === "object" && cell.value}
+                              </h6>
+                            </>
+                          ))}
+                        </TableExpandedRow>
+                      </React.Fragment>
+                    );
+                  })}
                 </TableBody>
               </Table>
+              {/* Print out selected row */}
             </TableContainer>
           );
         }}
