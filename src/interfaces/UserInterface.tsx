@@ -9,7 +9,6 @@ export interface User {
     uid: string
 }
 
-
 export interface TabItem {
     label: string;
     panel: ReactNode;

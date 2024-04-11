@@ -15,28 +15,20 @@ export const CarbonHomeTabs = () => {
                 <Tab renderIcon={() => <InventoryManagement />} >Gestión de Arriendos</Tab>
                 <Tab>Gestión de Ventas</Tab>
                 <Tab>Gestión de Propiedades</Tab>
+                <Tab>Gestión de Arrendatarios</Tab>
+                <Tab>Gestión de Propietarios</Tab>
                 {/* <Tab disabled>Settings</Tab> */}
             </TabList>
             <TabPanels >
                 <TabPanel style={{ backgroundColor: 'whitesmoke' }}><ImmDashboard /></TabPanel>
                 <TabPanel>
-                    {/* <form style={{
-                        margin: '2em'
-                    }}>
-                        <legend className={`cds--label`}>Validation example</legend>
-                        <Checkbox id="cb" labelText="Accept privacy policy" />
-                        <Button style={{
-                            marginTop: '1rem',
-                            marginBottom: '1rem'
-                        }} type="submit">
-                            Submit
-                        </Button>
-                        <TextInput type="text" labelText="Text input label" helperText="Optional help text" id="text-input-1" />
-                    </form> */}
-                    <CarbonGrid />
+
+                    <CarbonGrid name={'Gestión de Arriendos'} />
                 </TabPanel>
-                <TabPanel><CarbonGrid /></TabPanel>
-                <TabPanel><CarbonGrid /></TabPanel>
+                <TabPanel><CarbonGrid name={'Gestión de Ventas'} /></TabPanel>
+                <TabPanel><CarbonGrid name={'Gestión de Propiedades'} /></TabPanel>
+                <TabPanel><CarbonGrid name={'Gestión de Arrendatarios'} /></TabPanel>
+                <TabPanel><CarbonGrid name={'Gestión de Propietarios'} /></TabPanel>
                 {/* <TabPanel>Tab Panel 4</TabPanel> */}
             </TabPanels>
             {/* </div> */}

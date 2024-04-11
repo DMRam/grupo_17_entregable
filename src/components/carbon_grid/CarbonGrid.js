@@ -23,8 +23,9 @@ import {
   Link,
   Button,
 } from "@carbon/react";
-import { Download, Save, TrashCan } from "@carbon/icons-react";
+import { Download, OrderDetails, Save, TrashCan } from "@carbon/icons-react";
 import styles from "./CarbonGrid.module.css"; // Import CSS module
+
 const headerData = [
   {
     header: "Name",
@@ -116,7 +117,8 @@ const rowData = [
     status: <Link href="#">Active</Link>,
   },
 ];
-export const CarbonGrid = () => {
+
+export const CarbonGrid = ({ name }) => {
   const initialRows = rowData;
   const initialHeaders = headerData;
 
@@ -169,13 +171,28 @@ export const CarbonGrid = () => {
           const batchActionProps = getBatchActionProps();
           return (
             <TableContainer
-              title="Registro de Arriendos"
+              title={name}
               description="En esta sección podrás visualizar cada uno de los arriendos que tienes registrados, además de poder crear nuevos registros"
               {...getTableContainerProps()}
             >
               <TableToolbar {...getToolbarProps()}>
                 <TableBatchActions {...getBatchActionProps()}>
-                  {/* Batch actions */}
+                  <TableBatchAction
+                    renderIcon={TrashCan}
+                    iconDescription="Borrar registro"
+                    onClick={() => {}}
+                    tabIndex={batchActionProps.shouldShowBatchActions ? 0 : -1}
+                  >
+                    Borrar
+                  </TableBatchAction>
+                  <TableBatchAction
+                    renderIcon={OrderDetails}
+                    iconDescription="Ver detalles del elemento seleccionado"
+                    onClick={() => {}}
+                    tabIndex={batchActionProps.shouldShowBatchActions ? 0 : -1}
+                  >
+                    Detalles
+                  </TableBatchAction>
                 </TableBatchActions>
                 <TableToolbarContent
                   aria-hidden={batchActionProps.shouldShowBatchActions}
@@ -184,7 +201,7 @@ export const CarbonGrid = () => {
                     tabIndex={batchActionProps.shouldShowBatchActions ? -1 : 0}
                     onChange={onInputChange}
                   />
-                  <TableToolbarMenu
+                  {/* <TableToolbarMenu
                     tabIndex={batchActionProps.shouldShowBatchActions ? -1 : 0}
                   >
                     <TableToolbarAction onClick={handleOnRowAdd}>
@@ -193,7 +210,7 @@ export const CarbonGrid = () => {
                     <TableToolbarAction onClick={handleOnHeaderAdd}>
                       Add header
                     </TableToolbarAction>
-                  </TableToolbarMenu>
+                  </TableToolbarMenu> */}
                   <Button onClick={() => {}}>Nuevo</Button>
                 </TableToolbarContent>
               </TableToolbar>

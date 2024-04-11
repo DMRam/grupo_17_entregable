@@ -69,7 +69,7 @@ export const CarbonTabs = ({ contained }: Props) => {
                                     aria-current={index === selectedIndex ? "page" : undefined} // Apply aria-current to the selected tab
                                     onClick={() => handleTabSelection(index)}
                                 >
-                                    {tab.label}
+                                    {/* {tab.label} */}
                                 </Tab>
                             ) : (
                                 <Tab

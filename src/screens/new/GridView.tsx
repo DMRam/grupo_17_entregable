@@ -26,7 +26,7 @@ export const GridView = () => {
         <div style={styles.container}>
             <CarbonHeader name={userLoggedGlobal.name} />
             <div style={styles.gridContainer}>
-                <CarbonGrid />
+                <CarbonGrid name={"test"}/>
             </div>
         </div>
     );
