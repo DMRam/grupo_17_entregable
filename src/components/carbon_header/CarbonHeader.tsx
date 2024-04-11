@@ -38,10 +38,11 @@ export const CarbonHeader = ({ name }: Props) => {
     const { isUserLoggedOut, onUserLoggingOut } = useAuthentication()
     const navigate = useNavigate()
 
-    const onNewTab = (label:string) => {
+    const onNewTab = (label: string) => {
 
-
+        
         const newTenantTab: TabInfo = {
+
             label,
             panel: <TenantCreateForm />, // You can use an empty fragment as a default JSX element
             icon: () => <IntentRequestCreate />, // You can use an empty fragment as a default icon component
@@ -134,13 +135,13 @@ export const CarbonHeader = ({ name }: Props) => {
                             <SideNavDivider />
 
                             <SideNavMenu title={'Nuevo'}>
-                                <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                <SideNavMenuItem onClick={() => { onNewTab(' Nuevo Arriendo') }} >
                                     Nuevo Arriendo
                                 </SideNavMenuItem>
-                                <SideNavMenuItem onClick={() => {  onNewTab('Nuevo Cliente')}} >
+                                <SideNavMenuItem onClick={() => { onNewTab('Nuevo Cliente') }} >
                                     Nuevo Cliente
                                 </SideNavMenuItem>
-                                <SideNavMenuItem onClick={() => { alert("hi") }} >
+                                <SideNavMenuItem onClick={() => { onNewTab('Nueva Propiedad') }} >
                                     Nueva Propiedad
                                 </SideNavMenuItem>
                                 <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arrendatario') }} >
