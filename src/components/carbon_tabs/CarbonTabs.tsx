@@ -43,14 +43,20 @@ export const CarbonTabs = ({ contained }: Props) => {
         setSelectedIndex(index);
     };
 
-    const removeTab = (tabItem: TabInfo) => {
+    const removeTab = (indexToRemove: number) => {
+        console.log(indexToRemove + " *******")
+        // Get the TabInfo element at the specified index
+        const tabToRemove = tabList[indexToRemove];
         // Create a copy of the tabList array
-        const listItemsRemoved = tabList.filter(item => item !== tabItem);
+        const updatedTabList = [...tabList];
+        // Remove the tab at the specified index
+        updatedTabList.splice(indexToRemove, 1);
         // Update the state with the modified array
-        setTabList(listItemsRemoved);
-        // Call the onRemovingTabs function with the removed tabItem
-        onRemovingTabs(tabItem);
+        setTabList(updatedTabList);
+        // Call the onRemovingTabs function with the removed tabInfo
+        onRemovingTabs(indexToRemove);
     };
+    
 
     return (
         <>
@@ -75,7 +81,7 @@ export const CarbonTabs = ({ contained }: Props) => {
                                 <Tab
                                     key={index}
                                     style={{ backgroundColor: 'white' }}
-                                    renderIcon={() => <Close onClick={() => removeTab(tab)} />}
+                                    renderIcon={() => <Close onClick={() => removeTab(index)} />}
                                     aria-current={index === selectedIndex ? "page" : undefined} // Apply aria-current to the selected tab
                                     onClick={() => handleTabSelection(index)}
                                 >

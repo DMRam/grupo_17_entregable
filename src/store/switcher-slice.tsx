@@ -70,12 +70,13 @@ const sliceMenu = createSlice({
             state.listOfTabs.push(action.payload);
         },
         sliceRemoveElementToListOfTabs(state, action) {
-            const labelToRemove = action.payload.label;
-            state.listOfTabs = state.listOfTabs.filter(tab => tab.label !== labelToRemove);
-
-            console.log(listOfTabs.length + " SLICE")
+            // const indexToRemove = state.listOfTabs.findIndex(tab => tab.label === action.payload.label);
+            let indexToRemove = action.payload
+            console.log(indexToRemove + " INDEX SLICE")
+            if (indexToRemove !== -1) {
+                state.listOfTabs.splice(indexToRemove, 1);
+            }
         }
-
 
     },
 });

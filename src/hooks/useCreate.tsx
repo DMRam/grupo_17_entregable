@@ -13,7 +13,7 @@ export const useCreate = () => {
         dispatch(sliceAddElementToListOfTabs(newTab))
     }
 
-    const onRemovingTabs = (tabToRemove:TabInfo) => {
+    const onRemovingTabs = (tabToRemove:any) => {
         dispatch(sliceRemoveElementToListOfTabs(tabToRemove))
     }
 
