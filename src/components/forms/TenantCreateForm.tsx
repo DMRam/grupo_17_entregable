@@ -4,8 +4,16 @@ import axios from 'axios';
 import { useUser } from '../../hooks/useUser';
 import { CarbonDangerModal } from '../modal/CarbonDangerModal';
 import { Loading } from '@carbon/react';
+import { useNavigate } from 'react-router-dom';
+import { useCreate } from '../../hooks/useCreate';
+import { removeTab } from '../carbon_tabs/CarbonTabs';
 
-const TenantCreateForm = () => {
+interface Props {
+    indexRendered: number
+}
+
+
+const TenantCreateForm = ({ indexRendered }: Props) => {
     const { userLoggedGlobal } = useUser();
     const [tenant, setTenant] = useState({
         name: '',
@@ -25,6 +33,9 @@ const TenantCreateForm = () => {
     const [fileUploading, setFileUploading] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const navigate = useNavigate()
+    const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission } = useCreate();
+
 
 
     const handleFileUpload = (files: any) => {
@@ -46,65 +57,77 @@ const TenantCreateForm = () => {
         }));
     };
 
-    const onSubmitCreateTenant = (event: any) => {
+    console.log(indexRendered + " indexRendered")
+
+
+    // Set up global axios interceptor for error handling
+    axios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            console.error('HTTP request error:', error);
+            return Promise.reject(error);
+        }
+    );
+
+    const onSubmitCreateTenant = async (event: any) => {
         event.preventDefault();
         setSubmitting(true);
 
-        // Check if the email exists in the system
-        axios.get(`http://localhost:8080/api/tenants/email/${tenant.email}`)
-            .then((res) => {
-                const existingTenant = res.data.tenant;
-                if (existingTenant && existingTenant.email === tenant.email) {
-                    // Show a confirmation message to the user
-                    const confirmMessage = `Este arrendatario ya existe. ¿Desea actualizarlo?`;
-                    if (window.confirm(confirmMessage)) {
-                        // Update the existing tenant
-                        axios.put(`http://localhost:8080/api/tenants/${existingTenant.uid}`, {
-                            ...existingTenant,
-                            brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
-                        }).then(() => {
-                            console.log("Tenant updated successfully.");
-                            resetForm();
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1500);
-                        }).catch((updateErr) => {
-                            console.error("Error updating tenant:", updateErr);
-                            setSubmitting(false);
-                        });
-                    } else {
-                        // User chose not to update, do nothing
-                        setSubmitting(false);
-                    }
+        try {
+            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${tenant.email}`);
+            const existingTenant = response.data.tenant;
+
+            if (existingTenant && existingTenant.email === tenant.email) {
+                const confirmMessage = `Este arrendatario ya existe. ¿Desea actualizarlo?`;
+                if (window.confirm(confirmMessage)) {
+                    await updateExistingTenant(existingTenant);
                 } else {
-                    // If the email doesn't exist, create a new tenant
-                    createNewTenant();
+                    await createNewTenant();
                 }
-            }).catch((err) => {
-                console.error("Error checking if email exists:", err);
-                // If the email is not found, create a new tenant
-                createNewTenant();
-                setSubmitting(false);
-            });
-    };
+            } else {
+                await createNewTenant();
+            }
 
-    const createNewTenant = () => {
-        axios.post('http://localhost:8080/api/tenants/', {
-            ...tenant,
-            brokerIdAssociated: [userLoggedGlobal.uid],
-        }).then(() => {
-            console.log("Tenant created successfully.");
             resetForm();
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }).catch((createErr) => {
-            console.error("Error creating tenant:", createErr);
+            onSubmitFormTabIndexToRemove(indexRendered);
+            onIsSubmission()
+        } catch (error) {
+            console.error('Error in onSubmitCreateTenant:', error);
+            // Handle error and set submitting state accordingly
+        } finally {
             setSubmitting(false);
-        });
+        }
     };
 
+    const updateExistingTenant = async (existingTenant: any) => {
+        try {
+            await axios.put(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/${existingTenant.uid}`, {
+                ...existingTenant,
+                brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
+            });
+            onSubmitFormTabIndexToRemove(indexRendered);
+            onIsSubmission()
+            console.log("Tenant updated successfully.");
+        } catch (error) {
+            console.error("Error updating existing tenant:", error);
+            // Handle error
+        }
+    };
 
+    const createNewTenant = async () => {
+        try {
+            const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/tenants/', {
+                ...tenant,
+                brokerIdAssociated: [userLoggedGlobal.uid],
+            });
+            onSubmitFormTabIndexToRemove(indexRendered);
+            onIsSubmission()
+            console.log("New tenant created successfully:", response.data);
+        } catch (error) {
+            console.error("Error creating new tenant:", error);
+            // Handle error
+        }
+    };
 
     const resetForm = () => {
         setTenant({
@@ -119,7 +142,8 @@ const TenantCreateForm = () => {
             details: '',
             uploadedFile: null,
         });
-    }
+    };
+
 
 
 

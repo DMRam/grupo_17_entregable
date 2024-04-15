@@ -47,8 +47,10 @@ let listOfTabs: TabInfo[] = [{
     icon: () => <></>, // You can use an empty fragment as a default icon component
     disabled: false // or true based on your requirements
 }];
-
+const setIndexToRemoveFromCreateTabButton = 0
 const newDataComing = false
+const isSubmission = false
+const indexToRemoveFormSubmission = 0
 
 const initialState = {
     isLoggedOut: false,
@@ -56,13 +58,19 @@ const initialState = {
     metaDataSignUpTrigger: false,
     userLogged,
     listOfTabs,
-    newDataComing
+    newDataComing,
+    setIndexToRemoveFromCreateTabButton,
+    isSubmission,
+    indexToRemoveFormSubmission
 };
 
 const sliceMenu = createSlice({
     name: "ui",
     initialState,
     reducers: {
+        sliceOnSetIndexToRemoveFromCreateTabButton(state, action) {
+            state.setIndexToRemoveFromCreateTabButton = action.payload
+        },
         sliceToggleNewDataComing(state) {
             state.newDataComing = !state.newDataComing
         },
@@ -83,17 +91,23 @@ const sliceMenu = createSlice({
         },
         sliceRemoveElementToListOfTabs(state, action) {
             // const indexToRemove = state.listOfTabs.findIndex(tab => tab.label === action.payload.label);
+            console.log(action.payload + " &&&&&&&&")
             let indexToRemove = action.payload
             console.log(indexToRemove + " INDEX SLICE")
             if (indexToRemove !== -1) {
                 state.listOfTabs.splice(indexToRemove, 1);
             }
+        }, sliceOnSubmitFormTabIndexToRemove(state, action) {
+            state.indexToRemoveFormSubmission = action.payload
+        },
+        sliceOnIsSubmission(state) {
+            state.isSubmission = !state.isSubmission
         }
 
     },
 });
 
-export const { sliceToggleNewDataComing, toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
+export const { sliceOnIsSubmission, sliceOnSubmitFormTabIndexToRemove, sliceOnSetIndexToRemoveFromCreateTabButton, sliceToggleNewDataComing, toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
     sliceMenu.actions;
 export const selectUI = (state: RootState) => state.ui;
 

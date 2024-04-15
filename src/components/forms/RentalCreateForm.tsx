@@ -89,8 +89,9 @@ export const RentalCreateForm = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(formData); // You can handle form submission logic here
-
-        axios.post('http://localhost:8080/api/rentals/', formData).then(resp => {
+        // https://grupo-17-418915.uc.r.appspot.com
+        // http://localhost:8080
+        axios.post('https://grupo-17-418915.uc.r.appspot.com/api/rentals/', formData).then(resp => {
             console.log(resp + " RESPONSE")
         })
     };

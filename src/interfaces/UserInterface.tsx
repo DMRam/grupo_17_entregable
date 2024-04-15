@@ -11,8 +11,8 @@ export interface User {
 
 export interface TabItem {
     label: string;
-    panel: ReactNode;
-    icon: () => ReactNode;
+    panel?: (index: number) => JSX.Element; // Updated to accept a function with index parameter
+    icon: () => JSX.Element;
     disabled: boolean;
 }
 
@@ -32,4 +32,5 @@ export interface TabInfo {
     panel: JSX.Element;
     icon: () => JSX.Element;
     disabled: boolean;
+    fromCreateGrid?: boolean
 }

@@ -45,22 +45,22 @@ export const CarbonHeader = ({ name }: Props) => {
     const onNewTab = (label: string) => {
         let panelBasedOnLabel = <></>; // Default empty panel
 
-        switch (label) {
-            case 'Nuevo Arriendo':
-                panelBasedOnLabel = <RentalCreateForm />;
-                break;
-            case 'Nuevo Cliente':
-                panelBasedOnLabel = <ClientCreateForm />;
-                break;
-            case 'Nueva Propiedad':
-                panelBasedOnLabel = <PropertyCreateForm />;
-                break;
-            case 'Nuevo Arrendatario':
-                panelBasedOnLabel = <TenantCreateForm />;
-                break;
-            default:
-                break;
-        }
+        // switch (label) {
+        //     case 'Nuevo Arriendo':
+        //         panelBasedOnLabel = <RentalCreateForm />;
+        //         break;
+        //     case 'Nuevo Cliente':
+        //         panelBasedOnLabel = <ClientCreateForm />;
+        //         break;
+        //     case 'Nueva Propiedad':
+        //         panelBasedOnLabel = <PropertyCreateForm />;
+        //         break;
+        //     case 'Nuevo Arrendatario':
+        //         panelBasedOnLabel = <TenantCreateForm />;
+        //         break;
+        //     default:
+        //         break;
+        // }
 
         const newTenantTab: TabInfo = {
             label,

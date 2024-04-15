@@ -1,19 +1,20 @@
 import { InventoryManagement } from "@carbon/icons-react";
 import { Button, Checkbox, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput, Tile } from "@carbon/react";
 import axios from "axios";
-import { TableHead } from "carbon-components-react";
 import { useEffect, useState } from "react";
 import { rentHeaderData, rentRowData } from "../../data/DummyData";
 import { tenantHeader } from "../../data/TenantData";
 import { useAPI } from "../../hooks/useAPI";
 import { useAuthentication } from "../../hooks/useAuthentication";
+import { useUser } from "../../hooks/useUser";
 import { ImmDashboard } from "../../screens/dashboard/ImmDashboard";
 import { CarbonGrid } from "../carbon_grid/CarbonGrid";
 
 export const CarbonHomeTabs = () => {
 
     const [rowsFromApi, setRowsFromApi] = useState([])
-    const {isUserLoggedOut} = useAuthentication()
+    const { isUserLoggedOut } = useAuthentication()
+    const { userLoggedGlobal } = useUser()
 
     const generateId = (() => {
         let id = 0;
@@ -24,18 +25,23 @@ export const CarbonHomeTabs = () => {
     const { toggleNewDataComing } = useAPI()
 
     useEffect(() => {
-      onSelectTab()
+        console.log(userLoggedGlobal.uid + " USEEFFECT")
+        onSelectTab()
     }, [isUserLoggedOut])
-    
+
 
     const onSelectTab = () => {
-        console.log("TEST")
         try {
-            axios.get('http://localhost:8080/api/tenants/').then((res) => {
+            // https://grupo-17-418915.uc.r.appspot.com
+            // http://localhost:8080
+            axios.get('https://grupo-17-418915.uc.r.appspot.com/api/tenants/').then((res) => {
                 const apiRows = res.data.tenant.map((row: any) => ({ ...row, id: generateId() }));
-                setRowsFromApi(apiRows.filter((row: {}) => Object.keys(row).length > 1)); // Filter out empty objects
+                const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1)
+                const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any) => row.brokerIdAssociated.includes(userLoggedGlobal.uid));
+
+                setRowsFromApi(brokerUidApiNotEmptyRows);
                 setForceUpdate(prev => !prev); // Toggle forceUpdate to trigger re-render
-                toggleNewDataComing()
+                // toggleNewDataComing()
                 console.log(apiRows + " <-----")
             });
         } catch (error) {
@@ -49,15 +55,11 @@ export const CarbonHomeTabs = () => {
         console.log(item)
     })
 
-    const test = () => {
-        console.log("HIIII")
-    }
-
     return (
         <Tabs onChange={onSelectTab}  >
             {/* <div style={{ marginTop: 80 }}> */}
             <Tile style={{ backgroundColor: 'white' }} >Home</Tile>
-            <TabList onChange={onSelectTab} aria-label="List of tabs">
+            <TabList aria-label="List of tabs">
                 <Tab style={{ backgroundColor: 'white' }}>Dashboard</Tab>
                 <Tab renderIcon={() => <InventoryManagement />} >Gestión de Arriendos</Tab>
                 <Tab>Gestión de Ventas</Tab>

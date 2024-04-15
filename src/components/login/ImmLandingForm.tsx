@@ -15,7 +15,6 @@ export const ImmLandingForm = () => {
     const [error, setError] = useState('');
     const { userLoggedGlobal } = useUser();
     const navigate = useNavigate(); // Initialize useHistory with type History
-    const { onUserLoggingOut, isUserLoggedOut } = useAuthentication()
     const { onAddUserLoggedToGlobalAppState } = useUser()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -77,7 +76,7 @@ export const ImmLandingForm = () => {
                 {error && <div className="alert alert-danger">{error}</div>}
                 <div className="d-grid gap-2 mb-3">
                     <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : 'Login'}
+                        {loading ? <Spinner aria-modal animation="border" size="sm" /> : 'Login'}
                     </button>
                 </div>
 

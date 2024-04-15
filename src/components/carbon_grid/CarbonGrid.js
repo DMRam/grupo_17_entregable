@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useAPI } from "../../hooks/useAPI";
 import {
   DataTable,
   TableContainer,
@@ -34,11 +33,13 @@ import {
 import styles from "./CarbonGrid.module.css"; // Import CSS module
 import TenantCreateForm from "../forms/TenantCreateForm";
 import { useCreate } from "../../hooks/useCreate";
+import { useAuthentication } from "../../hooks/useAuthentication";
 
 export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const initialRows = rowData;
   const initialHeaders = headerData;
   const [selectedRows, setSelectedRows] = useState([]);
+  const { isUserLoggedOut } = useAuthentication();
 
   const [state, setState] = useState({
     rows: initialRows,
@@ -46,16 +47,12 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     id: 0,
   });
 
-  const {newDataComing} = useAPI()
-
   useEffect(() => {
-    setState((prevState) => ({
-      ...prevState,
+    setState({
+      ...state,
       rows: rowData,
-    }));
-  }, [newDataComing]);
-
-  console.log(newDataComing + " ==========================")
+    });
+  }, [isUserLoggedOut, rowData]);
 
   const { onCreateNewTab, addedTab } = useCreate();
 
@@ -105,27 +102,16 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   };
 
   const onCreateNewTabFromNewButton = (objectName) => {
-    let label = "";
-    if (objectName.includes("Arriendo")) {
-      label = "Arriendo";
-    } else if (objectName.includes("Venta")) {
-      label = "Venta";
-    } else if (objectName.includes("Propietario")) {
-      label = "Cliente";
-    } else if (objectName.includes("Arrendatario")) {
-      label = "Arrendatario";
-    }
-    onNewTab(label);
-  };
-
-  const onNewTab = (label) => {
+    let panelBasedOnLabel = <></>; // Default empty panel
     const newTenantTab = {
-      label,
-      panel: <TenantCreateForm />,
-      icon: () => <IntentRequestCreate />,
-      disabled: false,
+      label: objectName,
+      panel: panelBasedOnLabel,
+      icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
+      disabled: false, // or true based on your requirements
+      fromCreateGrid: true,
     };
-    // Open new form (Create View) in a new tab - Add to Redux
+
+    // Assuming onCreateNewTab is a function to handle tab creation in Redux
     onCreateNewTab(newTenantTab);
   };
 
