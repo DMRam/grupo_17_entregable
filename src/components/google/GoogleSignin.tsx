@@ -31,10 +31,14 @@ export const GoogleSignIn = () => {
       .then((resp) => resp.json())
       .then((resp) => {
         console.log("Server response:", resp);
-        onAddUserLoggedToGlobalAppState(resp.user); // Call the custom hook to update user data globally
+        localStorage.setItem('user', JSON.stringify(resp.user));
+        // Retrieve user data from local storage
+        
         if (isUserLoggedOut) {
-          onUserLoggingOut()
+          onUserLoggingOut(false);
         }
+
+        console.log(isUserLoggedOut + " isUserLoggedOut")
 
         localStorage.setItem('email', resp.user.email);
         navigate('/dashboard');
@@ -42,14 +46,14 @@ export const GoogleSignIn = () => {
       .catch(console.warn);
   }
 
-  const handleSignOut = () => {
-    console.log("Sign out clicked");
-    console.log(window.google.accounts.id);
-    window.google.accounts.id.revoke(localStorage.getItem('email'), (done: any) => {
-      localStorage.clear();
-      window.location.reload();
-    })
-  };
+  // const handleSignOut = () => {
+  //   console.log("Sign out clicked");
+  //   console.log(window.google.accounts.id);
+  //   window.google.accounts.id.revoke(localStorage.getItem('email'), (done: any) => {
+  //     localStorage.clear();
+  //     window.location.reload();
+  //   })
+  // };
 
   useEffect(() => {
     const googleSigninElement = document.querySelector(".g_id_signin");

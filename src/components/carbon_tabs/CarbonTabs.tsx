@@ -14,8 +14,21 @@ interface Props {
 export const CarbonTabs = ({ contained }: Props) => {
 
     const [selectedIndex, setSelectedIndex] = useState<number>(0); // Track selected tab index
-    const { userLoggedGlobal } = useUser();
+    const { userLoggedGlobal, onAddUserLoggedToGlobalAppState } = useUser();
     const { addedTab, onRemovingTabs } = useCreate();
+
+    useEffect(() => {
+
+        const storedUserString = localStorage.getItem('user');
+
+        console.log(storedUserString + " *********")
+        if (storedUserString !== null) {
+            const storedUser = JSON.parse(storedUserString);
+            // Update Redux state with the stored user data
+            onAddUserLoggedToGlobalAppState(storedUser);
+        }
+    }, [])
+
 
     const emptyTabList: TabInfo[] = [
         {
@@ -56,7 +69,7 @@ export const CarbonTabs = ({ contained }: Props) => {
         // Call the onRemovingTabs function with the removed tabInfo
         onRemovingTabs(indexToRemove);
     };
-    
+
 
     return (
         <>

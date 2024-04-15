@@ -9,9 +9,9 @@ export const useAuthentication = () => {
     const isUserLoggedOut = useAppSelector((state) => state.ui.isLoggedOut)
 
 
-    const onUserLoggingOut = () => {
+    const onUserLoggingOut = (isLoggedOut:boolean) => {
         
-        dispatch(toggleLoggedOut())
+        dispatch(toggleLoggedOut(isLoggedOut))
     }
     return {
         onUserLoggingOut,

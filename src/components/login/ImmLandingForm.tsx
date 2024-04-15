@@ -26,10 +26,13 @@ export const ImmLandingForm = () => {
             const credentials = { email, password }; // Prepare credentials for login
             const response = await axiosInstanceAuth.post('/auth/login', credentials);
             console.log(response.data + ' - Login successful');
-            onAddUserLoggedToGlobalAppState(response.data.user)
-            if (isUserLoggedOut) {
-                onUserLoggingOut()
-            }
+
+            console.log("Server response:", response);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            localStorage.setItem('email', response.data.user.email);
+
+            // Update Redux state with the logged-in user data
+            onAddUserLoggedToGlobalAppState(response.data.user);
 
             navigate('/dashboard'); // Redirect to dashboard after successful login
         } catch (error) {
@@ -38,6 +41,7 @@ export const ImmLandingForm = () => {
         } finally {
             setLoading(false); // Stop loading regardless of success or failure
         }
+
     };
 
     console.log(userLoggedGlobal.name + ' userLoggedGlobal.name');

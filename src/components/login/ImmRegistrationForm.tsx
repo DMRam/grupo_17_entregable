@@ -9,7 +9,7 @@ export const ImmRegistrationForm = () => {
     name: '',
     email: '',
     password: '',
-    role: '',
+    role: "BROKER_ROLE",
   });
   const [error, setError] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
@@ -27,20 +27,20 @@ export const ImmRegistrationForm = () => {
   };
 
 
-  const assignRole = (role: string) => {
-    switch (role) {
-      case 'corredor':
-        return 'BROKER_ROLE';
-      case 'arrendatario':
-        return 'TENANT_ROLE';
-      case 'dueño':
-        return 'OWNER_ROLE';
-      case 'administrador':
-        return 'ADMIN_ROLE';
-      default:
-        return '';
-    }
-  };
+  // const assignRole = (role: string) => {
+  //   switch (role) {
+  //     case 'corredor':
+  //       return 'BROKER_ROLE';
+  //     case 'arrendatario':
+  //       return 'TENANT_ROLE';
+  //     case 'dueño':
+  //       return 'OWNER_ROLE';
+  //     case 'administrador':
+  //       return 'ADMIN_ROLE';
+  //     default:
+  //       return '';
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,14 +49,14 @@ export const ImmRegistrationForm = () => {
       return;
     }
 
-    const role = assignRole(formData.role);
-    if (!role) {
-      setError('Invalid user type.');
-      return;
-    }
+    // const role = 
+    // if (!role) {
+    //   setError('Invalid user type.');
+    //   return;
+    // }
 
     try {
-      const { name, email, password } = formData;
+      const { name, email, password, role } = formData;
       const userData = { name, email, password, role };
       console.log("AXIOS => " + JSON.stringify(userData))
       const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/users/', userData);
@@ -89,7 +89,7 @@ export const ImmRegistrationForm = () => {
             className="form-control"
             id="name"
             name="name"
-            placeholder="Enter your name"
+            placeholder="Ingresa tu nombre"
             value={formData.name}
             onChange={handleChange}
             required
@@ -102,7 +102,7 @@ export const ImmRegistrationForm = () => {
             className="form-control"
             id="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Ingresa tu email"
             value={formData.email}
             onChange={handleChange}
             required
@@ -116,13 +116,13 @@ export const ImmRegistrationForm = () => {
             id="password"
             name="password"
             placeholder="Enter your password"
-            value={formData.password}
+            value={formData.password === '' ? '' : formData.password}
             onChange={handleChange}
             required
           />
         </div>
         <div className="form-group mb-3">
-          <label htmlFor="repeatPassword">Repeat Password</label>
+          <label htmlFor="repeatPassword">Verifica tu Password</label>
           <input
             type="password"
             className="form-control"
@@ -134,7 +134,7 @@ export const ImmRegistrationForm = () => {
             required
           />
         </div>
-        <div className="form-group mb-3">
+        {/* <div className="form-group mb-3">
           <label htmlFor="role">Eres un:</label>
           <select
             className="form-select"
@@ -150,7 +150,7 @@ export const ImmRegistrationForm = () => {
             <option value="dueño">Dueño</option>
             <option value="administrador">Administrador de Edificio</option>
           </select>
-        </div>
+        </div> */}
         {error && <div className="alert alert-danger">{error}</div>}
         <div className="d-grid gap-2 mb-3">
           <button type="submit" className="btn btn-primary">

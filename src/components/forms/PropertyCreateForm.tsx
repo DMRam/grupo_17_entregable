@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Checkbox, FileUploader, Form, FormGroup, Modal, NumberInput, RadioButton, RadioButtonGroup, Search, Select, SelectItem, Stack, TextArea, TextInput } from '@carbon/react';
 import { CarbonDangerModal } from '../modal/CarbonDangerModal';
 
-export const ClientCreateForm = () => {
+export const PropertyCreateForm = () => {
 
     const [displayModal, setDisplayModal] = useState<boolean>(false)
 

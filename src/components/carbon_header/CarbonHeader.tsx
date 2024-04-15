@@ -27,6 +27,9 @@ import { useState } from 'react';
 import TenantCreateForm from '../forms/TenantCreateForm';
 import { useAuthentication } from '../../hooks/useAuthentication';
 import { useNavigate } from 'react-router-dom';
+import { RentalCreateForm } from '../forms/RentalCreateForm';
+import { ClientCreateForm } from '../forms/ClientCreateForm';
+import { PropertyCreateForm } from '../forms/PropertyCreateForm';
 // import { Link, useNavigate } from 'react-router-dom';
 interface Props {
     name: string
@@ -38,17 +41,39 @@ export const CarbonHeader = ({ name }: Props) => {
     const { isUserLoggedOut, onUserLoggingOut } = useAuthentication()
     const navigate = useNavigate()
 
+
     const onNewTab = (label: string) => {
+        let panelBasedOnLabel = <></>; // Default empty panel
+
+        switch (label) {
+            case 'Nuevo Arriendo':
+                panelBasedOnLabel = <RentalCreateForm />;
+                break;
+            case 'Nuevo Cliente':
+                panelBasedOnLabel = <ClientCreateForm />;
+                break;
+            case 'Nueva Propiedad':
+                panelBasedOnLabel = <PropertyCreateForm />;
+                break;
+            case 'Nuevo Arrendatario':
+                panelBasedOnLabel = <TenantCreateForm />;
+                break;
+            default:
+                break;
+        }
+
         const newTenantTab: TabInfo = {
             label,
-            panel: <TenantCreateForm />, // You can use an empty fragment as a default JSX element
-            icon: () => <IntentRequestCreate />, // You can use an empty fragment as a default icon component
+            panel: panelBasedOnLabel,
+            icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
             disabled: false // or true based on your requirements
         };
-        // Open new form (Create View) in a new tab - Add to Redux
-        onCreateNewTab(newTenantTab)
+
+        // Assuming onCreateNewTab is a function to handle tab creation in Redux
+        onCreateNewTab(newTenantTab);
         setIsSideNavExpanded(!isSideNavExpanded);
-    }
+    };
+
 
     const onLogout = () => {
         console.log("Sign out clicked");
@@ -57,6 +82,7 @@ export const CarbonHeader = ({ name }: Props) => {
         // Clear specific items related to authentication
         localStorage.removeItem('token'); // Assuming 'token' is the authentication token key
         localStorage.removeItem('email'); // Assuming 'user' is the user information key
+        localStorage.removeItem('user'); // Assuming 'user' is the user information key
 
         // Remove the current page from session history and navigate to login
         window.history.replaceState(null, '', '/');
@@ -74,7 +100,7 @@ export const CarbonHeader = ({ name }: Props) => {
 
         // Make this true
         if (!isUserLoggedOut) {
-            onUserLoggingOut();
+            onUserLoggingOut(true);
         }
 
     }
@@ -94,32 +120,6 @@ export const CarbonHeader = ({ name }: Props) => {
                     <HeaderName href="/" prefix="Immobilier">
                         {name}
                     </HeaderName>
-                    {/* <Link to="/dashboard">
-                    <HeaderNavigation aria-label="Home">
-                        <HeaderMenuItem>Home</HeaderMenuItem>
-                    </HeaderNavigation>
-                </Link>
-                <Link to="/create_view">
-                    <HeaderNavigation aria-label="Analytics">
-                        <HeaderMenuItem href="/Analytics">Nuevo</HeaderMenuItem>
-                    </HeaderNavigation>
-                </Link>
-                <Link to="/dashboard">
-                    <HeaderNavigation aria-label="Analytics">
-                        <HeaderMenuItem href="/Analytics">Analítica</HeaderMenuItem>
-                    </HeaderNavigation>
-                </Link>
-                <Link to="/dashboard">
-                    <HeaderNavigation aria-label="Reports">
-                        <HeaderMenuItem href="/Reports">Reportes</HeaderMenuItem>
-                    </HeaderNavigation>
-                </Link>
-                <Link to="/dashboard">
-                    <HeaderNavigation aria-label="Logout">
-                        <HeaderMenuItem href="/repos">Logout</HeaderMenuItem>
-                    </HeaderNavigation>
-                </Link> */}
-
                     <SideNav
                         aria-label="Side navigation"
                         expanded={isSideNavExpanded}
@@ -132,7 +132,7 @@ export const CarbonHeader = ({ name }: Props) => {
                             <SideNavDivider />
 
                             <SideNavMenu title={'Nuevo'}>
-                                <SideNavMenuItem onClick={() => { onNewTab(' Nuevo Arriendo') }} >
+                                <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arriendo') }} >
                                     Nuevo Arriendo
                                 </SideNavMenuItem>
                                 <SideNavMenuItem onClick={() => { onNewTab('Nuevo Cliente') }} >
@@ -144,16 +144,17 @@ export const CarbonHeader = ({ name }: Props) => {
                                 <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arrendatario') }} >
                                     Nuevo Arrendatario
                                 </SideNavMenuItem>
-                            </SideNavMenu>
-                            <SideNavMenu title={'Analítica'}>
-
+                                <SideNavDivider />
 
                             </SideNavMenu>
-                            <SideNavMenu title={'Reportes'}>
+                            <SideNavMenuItem   >
+                                Analítica
+                            </SideNavMenuItem>
 
+                            <SideNavMenuItem  >
+                                Reportes
+                            </SideNavMenuItem>
 
-                            </SideNavMenu>
-                            <SideNavDivider />
                             <SideNavMenuItem onClick={onLogout} >
                                 Logout
                             </SideNavMenuItem>

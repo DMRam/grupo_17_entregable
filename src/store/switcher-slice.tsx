@@ -1,8 +1,15 @@
-import { Home } from "@carbon/icons-react";
 import { createSlice } from "@reduxjs/toolkit";
-import { CarbonHomeTabs } from "../components/carbon_tabs/CarbonHomeTabs";
-import { CreateNewTenantNewTab, CreateTenantForm, TabInfo, User } from "../interfaces/UserInterface";
+import { CreateTenantForm, TabInfo, User } from "../interfaces/UserInterface";
 import { RootState } from "./index";
+
+
+/**
+ * TODO
+ * > Create endpoints for form submission
+ * > Create endpoint to consume data 
+ *  > eg Get all Rentals where userId is equals to logged Uid
+ */
+
 
 interface ToggleState {
     isVisible: boolean;
@@ -41,21 +48,26 @@ let listOfTabs: TabInfo[] = [{
     disabled: false // or true based on your requirements
 }];
 
+const newDataComing = false
 
 const initialState = {
     isLoggedOut: false,
     metaDataLoginTrigger: false,
     metaDataSignUpTrigger: false,
     userLogged,
-    listOfTabs
+    listOfTabs,
+    newDataComing
 };
 
 const sliceMenu = createSlice({
     name: "ui",
     initialState,
     reducers: {
-        toggleLoggedOut(state) {
-            state.isLoggedOut = !state.isLoggedOut;
+        sliceToggleNewDataComing(state) {
+            state.newDataComing = !state.newDataComing
+        },
+        toggleLoggedOut(state, action) {
+            state.isLoggedOut = action.payload
         },
         addUserLogged(state, action) {
             state.userLogged = action.payload
@@ -81,7 +93,7 @@ const sliceMenu = createSlice({
     },
 });
 
-export const { toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
+export const { sliceToggleNewDataComing, toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
     sliceMenu.actions;
 export const selectUI = (state: RootState) => state.ui;
 

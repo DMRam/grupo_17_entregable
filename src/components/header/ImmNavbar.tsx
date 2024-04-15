@@ -32,34 +32,34 @@ export const ImmNavbar = ({ name }: Props) => {
     }
 
     // logout
-    const onLogout = () => {
-        console.log("Sign out clicked");
-        const email = localStorage.getItem('email');
+    // const onLogout = () => {
+    //     console.log("Sign out clicked");
+    //     const email = localStorage.getItem('email');
 
-        // Clear specific items related to authentication
-        localStorage.removeItem('token'); // Assuming 'token' is the authentication token key
-        localStorage.removeItem('email'); // Assuming 'user' is the user information key
+    //     // Clear specific items related to authentication
+    //     localStorage.removeItem('token'); // Assuming 'token' is the authentication token key
+    //     localStorage.removeItem('email'); // Assuming 'user' is the user information key
 
-        // Remove the current page from session history and navigate to login
-        window.history.replaceState(null, '', '/');
-        navigate('/', { replace: true });
+    //     // Remove the current page from session history and navigate to login
+    //     window.history.replaceState(null, '', '/');
+    //     navigate('/', { replace: true });
 
-        // Reload the page to reflect the logged-out state
-        window.location.reload();
+    //     // Reload the page to reflect the logged-out state
+    //     window.location.reload();
 
-        // Revoke access using Google API
-        if (email) {
-            window.google.accounts.id.revoke(email, (done: any) => {
-                console.log("Google account revoked");
-            });
-        }
+    //     // Revoke access using Google API
+    //     if (email) {
+    //         window.google.accounts.id.revoke(email, (done: any) => {
+    //             console.log("Google account revoked");
+    //         });
+    //     }
 
-        // Make this true
-        if (!isUserLoggedOut) {
-            onUserLoggingOut();
-        }
+    //     // Make this true
+    //     if (!isUserLoggedOut) {
+    //         onUserLoggingOut();
+    //     }
 
-    }
+    // }
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Navbar.Brand href="#home"> {/* Change this to your hamburger icon */}
@@ -74,7 +74,7 @@ export const ImmNavbar = ({ name }: Props) => {
                     <Nav.Link as={Link} to="/dashboard/settings">Settings</Nav.Link>
                 </Nav>
                 <Nav>
-                    <Nav.Link onClick={onLogout} href="/">Logout</Nav.Link>
+                    <Nav.Link href="/">Logout</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
             <div className="navbar">
@@ -94,7 +94,7 @@ export const ImmNavbar = ({ name }: Props) => {
                         <Nav.Link as={Link} to="/dashboard/analytics">Analytics</Nav.Link>
                         <Nav.Link as={Link} to="/dashboard/reports">Reports</Nav.Link>
                         <Nav.Link as={Link} to="/dashboard/settings">Settings</Nav.Link>
-                        <Nav.Link onClick={onLogout} href="/">Logout</Nav.Link>
+                        {/* <Nav.Link onClick={onLogout} href="/">Logout</Nav.Link> */}
                     </Nav>
                 </Modal.Body>
                 {/* You can add additional modal footer if needed */}

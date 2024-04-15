@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAPI } from "../../hooks/useAPI";
 import {
   DataTable,
   TableContainer,
@@ -44,6 +45,18 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     headers: initialHeaders,
     id: 0,
   });
+
+  const {newDataComing} = useAPI()
+
+  useEffect(() => {
+    setState((prevState) => ({
+      ...prevState,
+      rows: rowData,
+    }));
+  }, [newDataComing]);
+
+  console.log(newDataComing + " ==========================")
+
   const { onCreateNewTab, addedTab } = useCreate();
 
   const handleOnHeaderAdd = () => {
@@ -74,7 +87,6 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     const updatedRows = state.rows.filter(
       (row) => !selectedRows.some((selectedRow) => selectedRow.id === row.id)
     );
-
 
     console.log("Updated Rows After Deletion:", updatedRows.length);
 
@@ -116,6 +128,8 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     // Open new form (Create View) in a new tab - Add to Redux
     onCreateNewTab(newTenantTab);
   };
+
+  console.log(rowData + " GRID");
 
   return (
     <div className={styles.gridContainer}>
