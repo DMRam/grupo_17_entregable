@@ -6,7 +6,7 @@ import { CarbonDangerModal } from '../modal/CarbonDangerModal';
 import { Loading } from '@carbon/react';
 import { useNavigate } from 'react-router-dom';
 import { useCreate } from '../../hooks/useCreate';
-import { removeTab } from '../carbon_tabs/CarbonTabs';
+import axios_api from '../../api/axios/ImmAxios';
 
 interface Props {
     indexRendered: number
@@ -74,7 +74,7 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
         setSubmitting(true);
 
         try {
-            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${tenant.email}`);
+            const response = await axios_api.get(`tenants/email/${tenant.email}`);
             const existingTenant = response.data.tenant;
 
             if (existingTenant && existingTenant.email === tenant.email) {
@@ -101,7 +101,7 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
 
     const updateExistingTenant = async (existingTenant: any) => {
         try {
-            await axios.put(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/${existingTenant.uid}`, {
+            await axios_api.put(`tenants/${existingTenant.uid}`, {
                 ...existingTenant,
                 brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
             });
@@ -116,7 +116,7 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
 
     const createNewTenant = async () => {
         try {
-            const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/tenants/', {
+            const response = await axios_api.post('tenants/', {
                 ...tenant,
                 brokerIdAssociated: [userLoggedGlobal.uid],
             });

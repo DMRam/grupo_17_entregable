@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const axiosInstanceAuth = axios.create({
-    baseURL: 'https://grupo-17-418915.uc.r.appspot.com/api',
+const axios_api = axios.create({
+    // baseURL: 'https://grupo-17-418915.uc.r.appspot.com/',
+    baseURL: 'http://localhost:8080/'
 });
 
-export default axiosInstanceAuth;
+export default axios_api

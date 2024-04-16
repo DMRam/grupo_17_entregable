@@ -4,6 +4,7 @@ import { RentalForm } from '../../interfaces/RentalInterface';
 import { CreateTenantForm } from '../../interfaces/UserInterface';
 import { useUser } from '../../hooks/useUser';
 import axios from 'axios';
+import axios_api from '../../api/axios/ImmAxios';
 
 export const RentalCreateForm = () => {
     const { userLoggedGlobal } = useUser();
@@ -91,7 +92,7 @@ export const RentalCreateForm = () => {
         console.log(formData); // You can handle form submission logic here
         // https://grupo-17-418915.uc.r.appspot.com
         // http://localhost:8080
-        axios.post('https://grupo-17-418915.uc.r.appspot.com/api/rentals/', formData).then(resp => {
+        axios_api.post('/rentals/', formData).then(resp => {
             console.log(resp + " RESPONSE")
         })
     };

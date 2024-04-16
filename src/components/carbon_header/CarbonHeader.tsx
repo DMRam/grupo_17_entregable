@@ -18,18 +18,13 @@ import {
     SideNavHeader,
     SideNavMenu
 } from '@carbon/react';
-import { TrashCan, Switcher, Notification, UserAvatar, NonCertified, IntentRequestCreate } from '@carbon/icons-react';
+import { Switcher, Notification, UserAvatar, NonCertified, IntentRequestCreate } from '@carbon/icons-react';
 import './carbon_header.scss'
 import { useCreate } from '../../hooks/useCreate';
 import { TabInfo } from '../../interfaces/UserInterface';
-import { CreationForm } from '../forms/CreationForm';
 import { useState } from 'react';
-import TenantCreateForm from '../forms/TenantCreateForm';
 import { useAuthentication } from '../../hooks/useAuthentication';
 import { useNavigate } from 'react-router-dom';
-import { RentalCreateForm } from '../forms/RentalCreateForm';
-import { ClientCreateForm } from '../forms/ClientCreateForm';
-import { PropertyCreateForm } from '../forms/PropertyCreateForm';
 // import { Link, useNavigate } from 'react-router-dom';
 interface Props {
     name: string

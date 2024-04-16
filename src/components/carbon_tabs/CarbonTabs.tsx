@@ -65,7 +65,7 @@ export const CarbonTabs = ({ contained }: Props) => {
             case 'Nuevo Arriendo':
                 return <RentalCreateForm />;
             case 'Nuevo Cliente':
-                return <ClientCreateForm />;
+                return <ClientCreateForm indexRendered={index} />;
             case 'Nueva Propiedad':
                 return <PropertyCreateForm />;
             case 'Nuevo Arrendatario':

@@ -1,7 +1,7 @@
 import { InventoryManagement } from "@carbon/icons-react";
-import { Button, Checkbox, Tab, TabList, TabPanel, TabPanels, Tabs, TextInput, Tile } from "@carbon/react";
-import axios from "axios";
+import { Tab, TabList, TabPanel, TabPanels, Tabs, Tile } from "@carbon/react";
 import { useEffect, useState } from "react";
+import axios_api from "../../api/axios/ImmAxios";
 import { rentHeaderData, rentRowData } from "../../data/DummyData";
 import { tenantHeader } from "../../data/TenantData";
 import { useAPI } from "../../hooks/useAPI";
@@ -25,7 +25,6 @@ export const CarbonHomeTabs = () => {
     const { toggleNewDataComing } = useAPI()
 
     useEffect(() => {
-        console.log(userLoggedGlobal.uid + " USEEFFECT")
         onSelectTab()
     }, [isUserLoggedOut])
 
@@ -34,15 +33,23 @@ export const CarbonHomeTabs = () => {
         try {
             // https://grupo-17-418915.uc.r.appspot.com
             // http://localhost:8080
-            axios.get('https://grupo-17-418915.uc.r.appspot.com/api/tenants/').then((res) => {
+            axios_api('api/tenants/').then((res) => {
                 const apiRows = res.data.tenant.map((row: any) => ({ ...row, id: generateId() }));
                 const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1)
-                const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any) => row.brokerIdAssociated.includes(userLoggedGlobal.uid));
+                const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any, index: number, self: any[]) => {
+                    return row.brokerIdAssociated.includes(userLoggedGlobal.uid) && self.findIndex((r) => r.brokerIdAssociated === row.brokerIdAssociated) === index;
+                });
 
-                setRowsFromApi(brokerUidApiNotEmptyRows);
+                const removeDuplicationFromBrokerUidApiNotEmptyRows = brokerUidApiNotEmptyRows.map((item: { brokerIdAssociated: Iterable<unknown> | null | undefined; }) => ({
+                    ...item,
+                    brokerIdAssociated: Array.from(new Set(item.brokerIdAssociated)).join(', ')
+                })).map((item: { brokerIdAssociated: string; }) => ({
+                    ...item,
+                    brokerIdAssociated: item.brokerIdAssociated.replace(/^, /, '') // Remove coma at the beginning
+                }));
+
+                setRowsFromApi(removeDuplicationFromBrokerUidApiNotEmptyRows);
                 setForceUpdate(prev => !prev); // Toggle forceUpdate to trigger re-render
-                // toggleNewDataComing()
-                console.log(apiRows + " <-----")
             });
         } catch (error) {
             console.error('Error fetching tenant data:', error);
