@@ -6,17 +6,18 @@ import { CarbonDangerModal } from '../modal/CarbonDangerModal';
 import { Loading } from '@carbon/react';
 import { useNavigate } from 'react-router-dom';
 import { useCreate } from '../../hooks/useCreate';
-import { removeTab } from '../carbon_tabs/CarbonTabs';
 import axios_api from '../../api/axios/ImmAxios';
+import { Client } from '../../interfaces/UserInterface';
 
 interface Props {
     indexRendered: number
+    emailFromUpdateButton?: string
 }
 
 
-export const ClientCreateForm = ({ indexRendered }: Props) => {
+export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) => {
     const { userLoggedGlobal } = useUser();
-    const [tenant, setTenant] = useState({
+    const [client, setClient] = useState<Client>({
         name: '',
         email: '',
         brokerIdAssociated: userLoggedGlobal.uid,
@@ -27,6 +28,15 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
         maritalStatus: '',
         details: '',
         uploadedFile: null,
+        property: {
+            propertyRole: '',
+            address: '',
+            city: '',
+            country: '',
+            number: '',
+            department_number: '',
+            postalCode: ''
+        }
     });
 
     const [displayModal, setDisplayModal] = useState(false);
@@ -35,7 +45,7 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate()
-    const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission } = useCreate();
+    const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission, onSubmissionDoRefresh } = useCreate();
 
 
 
@@ -52,14 +62,11 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
 
     const onChange = (event: any) => {
         const { name, value } = event.target;
-        setTenant((prevTenant) => ({
-            ...prevTenant,
+        setClient((prevClient) => ({
+            ...prevClient,
             [name]: value,
         }));
     };
-
-    console.log(indexRendered + " indexRendered")
-
 
     // Set up global axios interceptor for error handling
     axios.interceptors.response.use(
@@ -70,59 +77,74 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
         }
     );
 
-    const onSubmitCreateTenant = async (event: any) => {
+    const onSubmitCreateClient = async (event: any) => {
         event.preventDefault();
         setSubmitting(true);
 
-        try {
-            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${tenant.email}`);
-            const existingTenant = response.data.tenant;
+        let emailToSubmitAPI = ''
+        if (emailFromUpdateButton != '') {
+            emailToSubmitAPI = emailFromUpdateButton
+        } else {
+            emailToSubmitAPI = client.email
+        }
 
-            if (existingTenant && existingTenant.email === tenant.email) {
-                const confirmMessage = `Este arrendatario ya existe. ¿Desea actualizarlo?`;
+        try {
+            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/clients/email/${emailToSubmitAPI}`);
+            const existingClient = response.data.client;
+
+            if (existingClient && existingClient.email === emailToSubmitAPI) {
+                const confirmMessage = `Este cliente ya existe. ¿Desea actualizarlo?`;
                 if (window.confirm(confirmMessage)) {
-                    await updateExistingTenant(existingTenant);
-                } else {
-                    await createNewTenant();
+                    await updateExistingClient(existingClient);
+                    onSubmissionDoRefresh();
                 }
             } else {
-                await createNewTenant();
+                const confirmMessageAccept = `¿Desea crear un nuevo cliente con estos detalles?`;
+                if (window.confirm(confirmMessageAccept)) {
+                    await createNewClient();
+                    
+                }
             }
 
             resetForm();
             onSubmitFormTabIndexToRemove(indexRendered);
-            onIsSubmission()
+            onIsSubmission();
+            onSubmissionDoRefresh();
+            console.log("New client created successfully:", response.data);
         } catch (error) {
-            console.error('Error in onSubmitCreateTenant:', error);
+            console.error('Error in onSubmitCreateClient:', error);
             // Handle error and set submitting state accordingly
         } finally {
             setSubmitting(false);
         }
     };
 
-    const updateExistingTenant = async (existingTenant: any) => {
+
+    const updateExistingClient = async (existingClient: any) => {
         try {
-            await axios_api.put(`tenants/${existingTenant.uid}`, {
-                ...existingTenant,
-                brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
+            await axios.put(`https://grupo-17-418915.uc.r.appspot.com/api/clients/${existingClient.uid}`, {
+                ...existingClient,
+                brokerIdAssociated: [...existingClient.brokerIdAssociated, userLoggedGlobal.uid],
+                name: client.name
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
-            console.log("Tenant updated successfully.");
+            console.log("Client updated successfully.");
         } catch (error) {
-            console.error("Error updating existing tenant:", error);
+            console.error("Error updating existing client:", error);
             // Handle error
         }
     };
 
-    const createNewTenant = async () => {
+    const createNewClient = async () => {
         try {
-            const response = await axios_api.post('tenants/', {
-                ...tenant,
+            const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/clients/', {
+                ...client,
                 brokerIdAssociated: [userLoggedGlobal.uid],
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
+            onSubmissionDoRefresh();
             console.log("New tenant created successfully:", response.data);
         } catch (error) {
             console.error("Error creating new tenant:", error);
@@ -131,22 +153,28 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
     };
 
     const resetForm = () => {
-        setTenant({
+        setClient({
             name: '',
             email: '',
             brokerIdAssociated: '',
             address: '',
             references: '',
-            age: 18,
+            age: 18, // Default age
             gender: null,
             maritalStatus: '',
             details: '',
             uploadedFile: null,
+            property: {
+                propertyRole: '',
+                address: '',
+                city: '',
+                country: '',
+                number: '',
+                department_number: '',
+                postalCode: ''
+            }
         });
     };
-
-
-
 
     const onHandleModal = () => {
         setDisplayModal(!displayModal);
@@ -157,94 +185,55 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
     };
 
     return (
-        <div style={{ backgroundColor: 'white', width: '60%', margin: 'auto', textAlign: 'center', padding: 20 }}>
-            <h3>Crear un Nuevo Arrendatario</h3>
-            <Form onSubmit={onSubmitCreateTenant} aria-label="Formulario de creación de nuevo arrendatario">
-                <Stack gap={4}>
-                    <FormGroup legendText="Subir Foto">
-                        <div className="cds--file__container">
-                            <FileUploader
-                                labelTitle="Upload files"
-                                labelDescription="Max file size is 500mb. Only .jpg files are supported."
-                                buttonLabel="Add file"
-                                buttonKind="primary"
-                                size="md"
-                                filenameStatus="edit"
-                                accept={['.jpg', '.png']}
-                                multiple={true}
-                                disabled={false}
-                                iconDescription="Delete file"
-                                name=""
-                                onChange={(event: any) => handleFileUpload(event.target.files)}
-                                onClick={() => setFileUploading(true)}
-                            />
 
-                        </div>
-                    </FormGroup>
-                    {loading && <Loading small />}
+
+
+        <div style={{ backgroundColor: 'white', width: '60%', margin: 'auto', textAlign: 'center', padding: 20 }}>
+            <h3>Crear un Nuevo Cliente</h3>
+            <hr />
+            <Form onSubmit={onSubmitCreateClient} aria-label="Formulario de creación de nuevo cliente">
+                <Stack gap={4}>
+                    {/* Other form fields */}
                     <TextInput
-                        id="nombre-arrendatario"
+                        id="nombre-cliente"
                         name="name"
                         labelText="Nombre"
                         placeholder="Ingrese el nombre"
-                        value={tenant.name}
+                        value={client.name}
                         onChange={onChange}
                     />
                     <TextInput
-                        id="correo-arrendatario"
+                        id="correo-cliente"
                         name="email"
                         labelText="Correo"
                         placeholder="Ingrese el correo"
-                        value={tenant.email}
+                        value={emailFromUpdateButton != '' ? emailFromUpdateButton : client.email}
                         onChange={onChange}
+                        disabled={emailFromUpdateButton != '' ? true : false}
                     />
                     <TextInput
-                        id="direccion-arrendatario"
+                        id="direccion-cliente"
                         name="address"
                         labelText="Dirección"
                         placeholder="Ingrese la dirección"
-                        value={tenant.address}
-                        onChange={onChange}
-                    />
-                    <TextInput
-                        id="referencias-arrendatario"
-                        name="references"
-                        labelText="Contacto y/o referencias"
-                        placeholder="Ingrese las referencias"
-                        value={tenant.references}
+                        value={client.address}
                         onChange={onChange}
                     />
                     <NumberInput
-                        className="some-class"
-                        id="edad-arrendatario"
+                        id="edad-cliente"
                         label="Edad"
                         min={18}
                         max={120}
-                        value={tenant.age}
+                        value={client.age}
                         step={1}
-                        iconDescription="Añadir/restar edad"
                         onChange={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, state: { value: string | number; direction: string; }) => {
-                            // Handle the onChange event here
-                            // You can access the value and direction from the state parameter
-                            const { value, direction } = state;
-                            // Update the tenant state accordingly
-                            setTenant({ ...tenant, age: parseInt(value as string, 10) || 18 });
+                            // Handle age change
                         }}
                     />
-                    {/* <RadioButtonGroup
-                        name="grupo-botones-radio"
-                        legendText="Género"
-                        onChange={onChange}
-                        valueSelected={selectedGender} // You may need to set the selected value if necessary
-                    >
-                        <RadioButton value="masculino" labelText="Masculino" id="masculino" />
-                        <RadioButton value="femenino" labelText="Femenino" id="femenino" />
-                    </RadioButtonGroup> */}
-
                     <Select
-                        id="estado-civil"
+                        id="estado-civil-cliente"
                         labelText="Estado Civil"
-                        onChange={(event) => setTenant({ ...tenant, maritalStatus: event.target.value })}
+                        onChange={(event) => setClient({ ...client, maritalStatus: event.target.value })}
                     >
                         <SelectItem value="soltero" text="Soltero/a" />
                         <SelectItem value="casado" text="Casado/a" />
@@ -252,20 +241,145 @@ export const ClientCreateForm = ({ indexRendered }: Props) => {
                         <SelectItem value="viudo" text="Viudo/a" />
                     </Select>
 
+                    <h3 style={{ marginTop: 30 }}>Sobre la Propiedad</h3>
+                    <hr />
+
+                    <TextInput
+                        id="propertyRole"
+                        name="property.propertyRole"
+                        labelText="Rol de la propiedad"
+                        placeholder="Ingrese el rol de la propiedad"
+                        value={client.property.propertyRole}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    propertyRole: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+                    <TextInput
+                        id="propertyAddress"
+                        name="property.address"
+                        labelText="Dirección de la propiedad"
+                        placeholder="Ingrese la dirección de la propiedad"
+                        value={client.property.address}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    address: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+
+                    <TextInput
+                        id="propertyCity"
+                        name="property.city"
+                        labelText="Ciudad"
+                        placeholder="Ingrese la ciudad conde se encuentra la propiedad"
+                        value={client.property.city}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    city: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+                    <TextInput
+                        id="propertyCountry"
+                        name="property.country"
+                        labelText="País"
+                        placeholder="Ingrese el país conde se encuentra la propiedad"
+                        value={client.property.country}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    country: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+                    <TextInput
+                        id="propertyNumber"
+                        name="property.number"
+                        labelText="Número"
+                        placeholder="Ingrese el numero cívico de la propiedad"
+                        value={client.property.number}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    number: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+                    <TextInput
+                        id="propertyNumber"
+                        name="property.number"
+                        labelText="Número departamento"
+                        placeholder="Ingrese el numero de departamento (si corresponde)"
+                        value={client.property.department_number}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    department_number: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
+                    <TextInput
+                        id="propertyPostalCode"
+                        name="property.postalCode"
+                        labelText="Código postal"
+                        placeholder="Ingrese el código postal (opcional)"
+                        value={client.property.postalCode}
+                        onChange={(event) => {
+                            const { name, value } = event.target;
+                            setClient((prevClient) => ({
+                                ...prevClient,
+                                property: {
+                                    ...prevClient.property,
+                                    postalCode: value, // Update the specific property within property object
+                                },
+                            }));
+                        }}
+                    />
                     <TextArea
-                        id="descripcion-arrendatario"
+                        id="detalles-cliente"
                         labelText="Detalles"
                         placeholder="Detalles adicionales..."
-                        value={tenant.details}
-                        onChange={(event) => setTenant({ ...tenant, details: event.target.value })}
+                        value={client.details}
+                        onChange={(event) => setClient({ ...client, details: event.target.value })}
                         rows={4}
                     />
                     <div>
                         <Button style={{ marginRight: 10 }} type="submit">
-                            Crear Arrendatario
+                            {emailFromUpdateButton !== '' ? "Actualizar Propietario" : "Crear Propietario"}
                         </Button>
+
                     </div>
                     {displayModal && <CarbonDangerModal open={displayModal} closeModal={onHandleModal} handleCancel={onCancelFormRemoveTab} />}
+
                 </Stack>
                 {submitting && <Loading description="Submitting..." />}
             </Form>

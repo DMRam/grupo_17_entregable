@@ -22,6 +22,8 @@ import {
   TableExpandedRow,
   Link,
   Button,
+  OverflowMenuItem,
+  OverflowMenu,
 } from "@carbon/react";
 import {
   Download,
@@ -29,11 +31,13 @@ import {
   Save,
   TrashCan,
   IntentRequestCreate,
+  UpdateNow,
 } from "@carbon/icons-react";
 import styles from "./CarbonGrid.module.css"; // Import CSS module
 import TenantCreateForm from "../forms/TenantCreateForm";
 import { useCreate } from "../../hooks/useCreate";
 import { useAuthentication } from "../../hooks/useAuthentication";
+import axios from "axios";
 
 export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const initialRows = rowData;
@@ -78,7 +82,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     }));
   };
 
-  const onDeleteSelectedRows = (selectedRows) => {
+  const onDeleteSelectedRowsFromUIGrid = (selectedRows) => {
     console.log("Selected Rows Before Deletion:", selectedRows.length);
 
     const updatedRows = state.rows.filter(
@@ -97,8 +101,124 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
         updatedRows.some((row) => row.id === selectedRow.id)
       )
     );
-
     console.log("Selected Rows After Deletion:", selectedRows);
+  };
+
+  const triggerRightFunctionForDelete = (objectName, selectedRows) => {
+    const selectedRowToDispatch = selectedRows;
+    if (objectName.includes("Arrendatario")) {
+      onDeleteSelectedRowsTenants(selectedRowToDispatch);
+    } else {
+      onDeleteSelectedRowsClients(selectedRowToDispatch);
+    }
+  };
+
+  const onDeleteSelectedRowsClients = async (selectedRows) => {
+    console.log("Selected Rows Before Deletion:", selectedRows.length);
+
+    // Filter selected rows to get the row with isSelected = true
+    // const selectedRow = selectedRows.find((row) => row.isSelected);
+    try {
+      selectedRows.map((item) => {
+        console.log(item.cells);
+        item.cells.map((inItem) => {
+          console.log(inItem.value);
+          let emailToDelete = "";
+          if (inItem.value.includes("@")) {
+            emailToDelete = inItem.value;
+
+            axios
+              .delete(
+                `https://grupo-17-418915.uc.r.appspot.com/api/clients/email/${emailToDelete}`
+              )
+              .then((res) => {
+                console.log(
+                  `User with email ${emailToDelete} was deleted successfully`
+                );
+                console.log(res);
+                onDeleteSelectedRowsFromUIGrid(selectedRows);
+              })
+              .catch((error) => {
+                console.log("Error removing the user selected:", error);
+              });
+          }
+        });
+      });
+
+      console.log("Row deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting row:", error);
+    }
+
+    setSelectedRows([]); // Clear selected rows after deletion
+  };
+
+  const onDeleteSelectedRowsTenants = async (selectedRows) => {
+    console.log(selectedRows + " !!!");
+    console.log("Selected Rows Before Deletion:", selectedRows.length);
+    console.log("Selected objectName:", objectName);
+    // Filter selected rows to get the row with isSelected = true
+    // const selectedRow = selectedRows.find((row) => row.isSelected);
+    try {
+      selectedRows.map((item) => {
+        console.log(item.cells);
+        item.cells.map((inItem) => {
+          console.log(inItem.value);
+          let emailToDelete = "";
+          if (inItem.value.includes("@")) {
+            emailToDelete = inItem.value;
+
+            axios
+              .delete(
+                `https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${emailToDelete}`
+              )
+              .then((res) => {
+                console.log(
+                  `User with email ${emailToDelete} was deleted successfully`
+                );
+                console.log(res);
+                onDeleteSelectedRowsFromUIGrid(selectedRows);
+              })
+              .catch((error) => {
+                console.log("Error removing the user selected:", error);
+              });
+          }
+        });
+      });
+
+      console.log("Row deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting row:", error);
+    }
+
+    setSelectedRows([]); // Clear selected rows after deletion
+  };
+
+  const onUpdate = (objectName, selectedRows) => {
+    selectedRows.map((item) => {
+      console.log(item.cells);
+      item.cells.map((inItem) => {
+        console.log(inItem.value);
+        let emailToUpdate = "";
+        if (inItem.value.includes("@")) {
+          emailToUpdate = inItem.value;
+
+          console.log(emailToUpdate + " <-------------");
+          // pass emaillet panelBasedOnLabel = <></>; // Default empty panel
+          let panelBasedOnLabel = <></>; // Default empty panel
+          const newTab = {
+            label: objectName,
+            panel: panelBasedOnLabel,
+            icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
+            disabled: false, // or true based on your requirements
+            fromCreateGrid: true,
+            email: emailToUpdate,
+          };
+          // Assuming onCreateNewTab is a function to handle tab creation in Redux
+          onCreateNewTab(newTab);
+        }
+      });
+    });
   };
 
   const onCreateNewTabFromNewButton = (objectName) => {
@@ -147,18 +267,24 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
                   <TableBatchAction
                     renderIcon={TrashCan}
                     iconDescription="Borrar registro"
-                    onClick={() => onDeleteSelectedRows(selectedRows)}
+                    onClick={
+                      () =>
+                        objectName.includes("Arrendatario")
+                          ? onDeleteSelectedRowsTenants(selectedRows)
+                          : onDeleteSelectedRowsClients(selectedRows)
+                      // triggerRightFunctionForDelete(selectedRows, objectName)
+                    }
                     tabIndex={batchActionProps.shouldShowBatchActions ? 0 : -1}
                   >
                     Borrar
                   </TableBatchAction>
                   <TableBatchAction
-                    renderIcon={OrderDetails}
+                    renderIcon={UpdateNow}
                     iconDescription="Ver detalles del elemento seleccionado"
-                    onClick={() => {}}
+                    onClick={() => onUpdate(objectName, selectedRows)}
                     tabIndex={batchActionProps.shouldShowBatchActions ? 0 : -1}
                   >
-                    Detalles
+                    Actualizar
                   </TableBatchAction>
                 </TableBatchActions>
                 <TableToolbarContent
@@ -183,6 +309,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
                       onCreateNewTabFromNewButton(objectName);
                     }}
                   >
+                    {/* New Element Button */}
                     {objectName}
                   </Button>{" "}
                   {/* New Button  */}
@@ -191,7 +318,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
               <Table {...getTableProps()} aria-label="sample table">
                 <TableHead>
                   <TableRow>
-                    <TableExpandHeader aria-label="expand row" />
+                    {/* Remove TableExpandHeader */}
                     <TableSelectAll
                       ariaLabel="Select all rows"
                       checked={true}
@@ -214,32 +341,16 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
                 <TableBody>
                   {rows.map((row) => {
                     return (
-                      <React.Fragment key={row.id}>
-                        <TableExpandRow {...getRowProps({ row })}>
-                          <TableSelectRow {...getSelectionProps({ row })} />
-                          {row.cells.map((cell) => (
-                            <TableCell key={cell.id}>
-                              {!React.isValidElement(cell.value) && (
-                                <div>{cell.value}</div>
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableExpandRow>
-                        <TableExpandedRow
-                          colSpan={headers.length + 3}
-                          className="demo-expanded-td"
-                          {...getExpandedRowProps({ row })}
-                        >
-                          {row.cells.map((cell) => (
-                            // <h6>Expandable row content</h6>
-                            <>
-                              <h6>
-                                {typeof cell.value === "object" && cell.value}
-                              </h6>
-                            </>
-                          ))}
-                        </TableExpandedRow>
-                      </React.Fragment>
+                      <TableRow key={row.id} {...getRowProps({ row })}>
+                        <TableSelectRow {...getSelectionProps({ row })} />
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>
+                            {!React.isValidElement(cell.value) && (
+                              <div>{cell.value}</div>
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
                     );
                   })}
                 </TableBody>

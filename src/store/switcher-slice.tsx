@@ -45,12 +45,14 @@ let listOfTabs: TabInfo[] = [{
     label: '',
     panel: <></>, // You can use an empty fragment as a default JSX element
     icon: () => <></>, // You can use an empty fragment as a default icon component
-    disabled: false // or true based on your requirements
+    disabled: false, // or true based on your requirements
+    email: ''
 }];
 const setIndexToRemoveFromCreateTabButton = 0
 const newDataComing = false
 const isSubmission = false
 const indexToRemoveFormSubmission = 0
+const onSubmissionDoRefresh = false
 
 const initialState = {
     isLoggedOut: false,
@@ -61,7 +63,8 @@ const initialState = {
     newDataComing,
     setIndexToRemoveFromCreateTabButton,
     isSubmission,
-    indexToRemoveFormSubmission
+    indexToRemoveFormSubmission,
+    onSubmissionDoRefresh
 };
 
 const sliceMenu = createSlice({
@@ -102,12 +105,15 @@ const sliceMenu = createSlice({
         },
         sliceOnIsSubmission(state) {
             state.isSubmission = !state.isSubmission
-        }
+        },
 
+        sliceToggleOnSubmissionDoRefresh(state) {
+            state.onSubmissionDoRefresh = !state.onSubmissionDoRefresh
+        }
     },
 });
 
-export const { sliceOnIsSubmission, sliceOnSubmitFormTabIndexToRemove, sliceOnSetIndexToRemoveFromCreateTabButton, sliceToggleNewDataComing, toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
+export const { sliceToggleOnSubmissionDoRefresh, sliceOnIsSubmission, sliceOnSubmitFormTabIndexToRemove, sliceOnSetIndexToRemoveFromCreateTabButton, sliceToggleNewDataComing, toggleLoggedOut, addUserLogged, toggleMetaDataBooleanLogin, toggleMetaDataBooleanSignUp, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs } =
     sliceMenu.actions;
 export const selectUI = (state: RootState) => state.ui;
 

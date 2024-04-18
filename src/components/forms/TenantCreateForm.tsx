@@ -6,14 +6,15 @@ import { CarbonDangerModal } from '../modal/CarbonDangerModal';
 import { Loading } from '@carbon/react';
 import { useNavigate } from 'react-router-dom';
 import { useCreate } from '../../hooks/useCreate';
-import axios_api from '../../api/axios/ImmAxios';
+import { removeTab } from '../carbon_tabs/CarbonTabs';
 
 interface Props {
     indexRendered: number
+    emailFromUpdateButton?: string | undefined
 }
 
 
-const TenantCreateForm = ({ indexRendered }: Props) => {
+const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) => {
     const { userLoggedGlobal } = useUser();
     const [tenant, setTenant] = useState({
         name: '',
@@ -34,9 +35,10 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate()
-    const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission } = useCreate();
+    const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission, onSubmissionDoRefresh } = useCreate();
 
 
+    console.log(emailFromUpdateButton + " emailFromUpdateButton $%%%$%^%$$$$")
 
     const handleFileUpload = (files: any) => {
         if (files.length > 0) {
@@ -73,37 +75,56 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
         event.preventDefault();
         setSubmitting(true);
 
+        let emailToSubmitAPI = ''
+        if (emailFromUpdateButton != '') {
+            emailToSubmitAPI = emailFromUpdateButton
+        } else {
+            emailToSubmitAPI = tenant.email
+        }
+
         try {
-            const response = await axios_api.get(`tenants/email/${tenant.email}`);
+            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${emailToSubmitAPI}`);
             const existingTenant = response.data.tenant;
 
-            if (existingTenant && existingTenant.email === tenant.email) {
+            if (existingTenant && existingTenant.email === emailToSubmitAPI) {
                 const confirmMessage = `Este arrendatario ya existe. ¿Desea actualizarlo?`;
                 if (window.confirm(confirmMessage)) {
                     await updateExistingTenant(existingTenant);
-                } else {
-                    await createNewTenant();
+                    onSubmissionDoRefresh();
                 }
             } else {
-                await createNewTenant();
+                const confirmMessageAccept = `¿Desea crear un nuevo Arrendatario con estos detalles?`;
+                if (window.confirm(confirmMessageAccept)) {
+                    await createNewTenant()
+                    
+                }
             }
+
 
             resetForm();
             onSubmitFormTabIndexToRemove(indexRendered);
-            onIsSubmission()
-        } catch (error) {
+            onIsSubmission();
+        } catch (error: any) {
             console.error('Error in onSubmitCreateTenant:', error);
+            if (error.response) {
+                console.error('Response data:', error.response.data);
+                console.error('Response status:', error.response.status);
+            }
             // Handle error and set submitting state accordingly
         } finally {
             setSubmitting(false);
         }
     };
 
+
+
     const updateExistingTenant = async (existingTenant: any) => {
+        console.log("updateExistingTenant ----> " + JSON.stringify(existingTenant))
         try {
-            await axios_api.put(`tenants/${existingTenant.uid}`, {
+            await axios.put(`https://grupo-17-418915.uc.r.appspot.com/api/tenants/${existingTenant.uid}`, {
                 ...existingTenant,
                 brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
+                name: tenant.name
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
@@ -116,12 +137,13 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
 
     const createNewTenant = async () => {
         try {
-            const response = await axios_api.post('tenants/', {
+            const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/tenants/', {
                 ...tenant,
                 brokerIdAssociated: [userLoggedGlobal.uid],
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
+            onSubmissionDoRefresh();
             console.log("New tenant created successfully:", response.data);
         } catch (error) {
             console.error("Error creating new tenant:", error);
@@ -194,8 +216,9 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
                         name="email"
                         labelText="Correo"
                         placeholder="Ingrese el correo"
-                        value={tenant.email}
+                        value={emailFromUpdateButton != '' ? emailFromUpdateButton : tenant.email}
                         onChange={onChange}
+                        disabled={emailFromUpdateButton != '' ? true : false}
                     />
                     <TextInput
                         id="direccion-arrendatario"
@@ -261,8 +284,9 @@ const TenantCreateForm = ({ indexRendered }: Props) => {
                     />
                     <div>
                         <Button style={{ marginRight: 10 }} type="submit">
-                            Crear Arrendatario
+                            {emailFromUpdateButton !== '' ? "Actualizar Arrendatario" : "Crear Arrendatario"}
                         </Button>
+
                     </div>
                     {displayModal && <CarbonDangerModal open={displayModal} closeModal={onHandleModal} handleCancel={onCancelFormRemoveTab} />}
                 </Stack>

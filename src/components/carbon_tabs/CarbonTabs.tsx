@@ -10,6 +10,7 @@ import TenantCreateForm from '../forms/TenantCreateForm';
 import { ClientCreateForm } from '../forms/ClientCreateForm';
 import { PropertyCreateForm } from '../forms/PropertyCreateForm';
 import { RentalCreateForm } from '../forms/RentalCreateForm';
+import { useRefresh } from '../../provider/RefreshProvider';
 
 interface Props {
     contained?: any;
@@ -46,30 +47,33 @@ export const CarbonTabs = ({ contained }: Props) => {
     const [tabList, setTabList] = useState<TabInfo[]>(emptyTabList);
 
     useEffect(() => {
+        // const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1);
         if (addedTab.length > 0) {
             let filteredList = addedTab.filter(item => item.label != '');
             const newList = [...emptyTabList, ...filteredList];
+
             setTabList(newList);
             setSelectedIndex(newList.length - 1);
         }
     }, [addedTab.length]);
 
+
     const handleTabSelection = (index: number) => {
         setSelectedIndex(index);
     };
 
-    const onTabPanel = (index: number, label: string) => {
+    const onTabPanel = (index: number, label: string, email?: string) => {
         switch (label) {
             case 'Home':
                 return <CarbonHomeTabs />;
             case 'Nuevo Arriendo':
                 return <RentalCreateForm />;
             case 'Nuevo Cliente':
-                return <ClientCreateForm indexRendered={index} />;
+                return <ClientCreateForm emailFromUpdateButton={email} indexRendered={index} />;
             case 'Nueva Propiedad':
                 return <PropertyCreateForm />;
             case 'Nuevo Arrendatario':
-                return <TenantCreateForm indexRendered={index} />;
+                return <TenantCreateForm emailFromUpdateButton={email} indexRendered={index} />;
             default:
                 return null;
         }
@@ -125,9 +129,12 @@ export const CarbonTabs = ({ contained }: Props) => {
                     </TabList>
                     <TabPanels>
                         {tabList.map((tab, index) => (
-                            <TabPanel style={{ backgroundColor: 'white' }} key={index}>
-                                {onTabPanel(index, tab.label)}
-                            </TabPanel>
+                            tab.label != '' && (<>
+                                <TabPanel style={{ backgroundColor: 'white' }} key={index}>
+                                    {onTabPanel(index, tab.label, tab.email)}
+                                </TabPanel>
+                            </>
+                            )
                         ))}
                     </TabPanels>
                 </Tabs>
