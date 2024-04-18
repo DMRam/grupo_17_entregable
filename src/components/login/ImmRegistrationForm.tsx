@@ -2,6 +2,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
+import { urlToApiCall } from '../../data/UrlForAPICalls';
 import './imm_registration.css'; // Import your CSS file for styling
 
 export const ImmRegistrationForm = () => {
@@ -59,7 +60,7 @@ export const ImmRegistrationForm = () => {
       const { name, email, password, role } = formData;
       const userData = { name, email, password, role };
       console.log("AXIOS => " + JSON.stringify(userData))
-      const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/users/', userData);
+      const response = await axios.post(`${urlToApiCall}api/users/`, userData);
       console.log('Form submitted:', response.data);
       // Reset form data after successful submission
       setFormData({
