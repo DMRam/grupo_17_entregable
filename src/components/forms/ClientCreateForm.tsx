@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreate } from '../../hooks/useCreate';
 import axios_api from '../../api/axios/ImmAxios';
 import { Client } from '../../interfaces/UserInterface';
+import { urlToApiCall } from '../../data/UrlForAPICalls';
 
 interface Props {
     indexRendered: number
@@ -89,7 +90,7 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
         }
 
         try {
-            const response = await axios.get(`https://grupo-17-418915.uc.r.appspot.com/api/clients/email/${emailToSubmitAPI}`);
+            const response = await axios.get(`${urlToApiCall}api/clients/email/${emailToSubmitAPI}`);
             const existingClient = response.data.client;
 
             if (existingClient && existingClient.email === emailToSubmitAPI) {
@@ -122,7 +123,7 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
 
     const updateExistingClient = async (existingClient: any) => {
         try {
-            await axios.put(`https://grupo-17-418915.uc.r.appspot.com/api/clients/${existingClient.uid}`, {
+            await axios.put(`${urlToApiCall}api/clients/${existingClient.uid}`, {
                 ...existingClient,
                 brokerIdAssociated: [...existingClient.brokerIdAssociated, userLoggedGlobal.uid],
                 name: client.name
@@ -138,7 +139,7 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
 
     const createNewClient = async () => {
         try {
-            const response = await axios.post('https://grupo-17-418915.uc.r.appspot.com/api/clients/', {
+            const response = await axios.post(`${urlToApiCall}api/clients/`, {
                 ...client,
                 brokerIdAssociated: [userLoggedGlobal.uid],
             });

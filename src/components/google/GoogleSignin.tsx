@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
+import { urlToApiCall } from "../../data/UrlForAPICalls";
 import { useAuthentication } from "../../hooks/useAuthentication";
 import { useUser } from "../../hooks/useUser";
 
@@ -21,7 +22,7 @@ export const GoogleSignIn = () => {
     console.log("Token:", token);
     console.log("Handling response:", response);
     const body = { id_token: response.credential };
-    fetch("https://grupo-17-418915.uc.r.appspot.com/api/auth/google", {
+    fetch(`${urlToApiCall}api/auth/google`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
