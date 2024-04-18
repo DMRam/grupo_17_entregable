@@ -8,12 +8,8 @@ export const tenantHeader = [
         key: "name",
     },
     {
-        header: "Apellido",
+        header: "Email",
         key: "email",
-    },
-    {
-        header: "Status",
-        key: "status",
     },
     {
         header: "Corredores asociados a este Arrendatario",

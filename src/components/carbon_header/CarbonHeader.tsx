@@ -18,18 +18,13 @@ import {
     SideNavHeader,
     SideNavMenu
 } from '@carbon/react';
-import { TrashCan, Switcher, Notification, UserAvatar, NonCertified, IntentRequestCreate } from '@carbon/icons-react';
+import { Switcher, Notification, UserAvatar, NonCertified, IntentRequestCreate } from '@carbon/icons-react';
 import './carbon_header.scss'
 import { useCreate } from '../../hooks/useCreate';
 import { TabInfo } from '../../interfaces/UserInterface';
-import { CreationForm } from '../forms/CreationForm';
 import { useState } from 'react';
-import TenantCreateForm from '../forms/TenantCreateForm';
 import { useAuthentication } from '../../hooks/useAuthentication';
 import { useNavigate } from 'react-router-dom';
-import { RentalCreateForm } from '../forms/RentalCreateForm';
-import { ClientCreateForm } from '../forms/ClientCreateForm';
-import { PropertyCreateForm } from '../forms/PropertyCreateForm';
 // import { Link, useNavigate } from 'react-router-dom';
 interface Props {
     name: string
@@ -44,23 +39,6 @@ export const CarbonHeader = ({ name }: Props) => {
 
     const onNewTab = (label: string) => {
         let panelBasedOnLabel = <></>; // Default empty panel
-
-        // switch (label) {
-        //     case 'Nuevo Arriendo':
-        //         panelBasedOnLabel = <RentalCreateForm />;
-        //         break;
-        //     case 'Nuevo Cliente':
-        //         panelBasedOnLabel = <ClientCreateForm />;
-        //         break;
-        //     case 'Nueva Propiedad':
-        //         panelBasedOnLabel = <PropertyCreateForm />;
-        //         break;
-        //     case 'Nuevo Arrendatario':
-        //         panelBasedOnLabel = <TenantCreateForm />;
-        //         break;
-        //     default:
-        //         break;
-        // }
 
         const newTenantTab: TabInfo = {
             label,
@@ -132,15 +110,15 @@ export const CarbonHeader = ({ name }: Props) => {
                             <SideNavDivider />
 
                             <SideNavMenu title={'Nuevo'}>
-                                <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arriendo') }} >
+                                {/* <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arriendo') }} >
                                     Nuevo Arriendo
-                                </SideNavMenuItem>
+                                </SideNavMenuItem> */}
                                 <SideNavMenuItem onClick={() => { onNewTab('Nuevo Cliente') }} >
-                                    Nuevo Cliente
+                                    Nuevo Propietario
                                 </SideNavMenuItem>
-                                <SideNavMenuItem onClick={() => { onNewTab('Nueva Propiedad') }} >
+                                {/* <SideNavMenuItem onClick={() => { onNewTab('Nueva Propiedad') }} >
                                     Nueva Propiedad
-                                </SideNavMenuItem>
+                                </SideNavMenuItem> */}
                                 <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arrendatario') }} >
                                     Nuevo Arrendatario
                                 </SideNavMenuItem>

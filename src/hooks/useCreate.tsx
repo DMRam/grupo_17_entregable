@@ -1,7 +1,7 @@
 import React from 'react'
 import { TabInfo } from '../interfaces/UserInterface'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs, sliceOnSetIndexToRemoveFromCreateTabButton, sliceOnSubmitFormTabIndexToRemove, sliceOnIsSubmission } from '../store/switcher-slice'
+import { sliceToggleOnSubmissionDoRefresh, sliceAddElementToListOfTabs, sliceRemoveElementToListOfTabs, sliceOnSetIndexToRemoveFromCreateTabButton, sliceOnSubmitFormTabIndexToRemove, sliceOnIsSubmission } from '../store/switcher-slice'
 
 export const useCreate = () => {
 
@@ -11,6 +11,7 @@ export const useCreate = () => {
     const getIndexToRemoveFromSubmitForm = useAppSelector((state) => state.ui.setIndexToRemoveFromCreateTabButton)
     const isSubmission = useAppSelector((state) => state.ui.isSubmission)
     const indexToRemoveFormSubmission = useAppSelector((state) => state.ui.indexToRemoveFormSubmission)
+    const triggerRefresh = useAppSelector((state) => state.ui.onSubmissionDoRefresh)
 
 
     const onSubmitFormTabIndexToRemove = (index: number) => {
@@ -22,6 +23,7 @@ export const useCreate = () => {
     }
 
     const onCreateNewTab = (newTab: TabInfo) => {
+        console.log(JSON.stringify(newTab) + " DENTRO DEL CUSTOM HOOK")
         dispatch(sliceAddElementToListOfTabs(newTab))
     }
 
@@ -34,15 +36,22 @@ export const useCreate = () => {
         dispatch(sliceOnSetIndexToRemoveFromCreateTabButton(index))
     }
 
+    const onSubmissionDoRefresh = () => {
+        dispatch(sliceToggleOnSubmissionDoRefresh())
+    }
+    
+
     return {
         addedTab,
         getIndexToRemoveFromSubmitForm,
         isSubmission,
         indexToRemoveFormSubmission,
+        triggerRefresh,
         onCreateNewTab,
         onRemovingTabs,
         onSetIndexToRemoveFromSubmitForm,
         onSubmitFormTabIndexToRemove,
-        onIsSubmission
+        onIsSubmission,
+        onSubmissionDoRefresh
     }
 }

@@ -32,5 +32,31 @@ export interface TabInfo {
     panel: JSX.Element;
     icon: () => JSX.Element;
     disabled: boolean;
-    fromCreateGrid?: boolean
+    fromCreateGrid?: boolean;
+    email?: string
 }
+
+export interface Property {
+    propertyRole: string;
+    number: string;
+    department_number: string;
+    address: string;
+    postalCode: string;
+    city: string;
+    country: string;
+}
+
+export interface Client {
+    name: string;
+    email: string;
+    brokerIdAssociated: string;
+    address: string;
+    references: string;
+    age: number
+    gender: null,
+    maritalStatus: string;
+    details: string;
+    uploadedFile: null,
+    property: Property;
+}
+
