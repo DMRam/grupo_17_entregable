@@ -1,0 +1,54 @@
+/* Landing Page Styles */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.landing-page h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.landing-page p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  color: #666666;
+}
+
+.auth-buttons {
+  display: flex;
+}
+
+.btn {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+.login {
+  background-image: url("https://wallpaperaccess.com/full/1704828.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; /* Optional: Ensures the background image covers the entire body */
+}

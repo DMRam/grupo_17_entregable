@@ -1,0 +1,26 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  font-family: "Your Custom Font", sans-serif; /* Replace 'Your Custom Font' with your desired font */
+}
+
+.user-info {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.user-icon {
+  margin-right: 5px;
+}
+
+/* Add media queries for responsiveness if needed */
