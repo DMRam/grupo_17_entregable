@@ -6,6 +6,8 @@ import { useUser } from '../../hooks/useUser';
 import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
 import { Spinner } from 'react-bootstrap';
+import axios from 'axios';
+import { urlToApiCall } from '../../data/UrlForAPICalls';
 
 
 export const ImmLandingForm = () => {
@@ -23,7 +25,7 @@ export const ImmLandingForm = () => {
 
         try {
             const credentials = { email, password }; // Prepare credentials for login
-            const response = await axiosInstanceAuth.post('/auth/login', credentials);
+            const response = await axios.post(`${urlToApiCall}api/auth/login/`, credentials);
             console.log(response.data + ' - Login successful');
 
             console.log("Server response:", response);
