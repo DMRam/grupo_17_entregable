@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { clientHeader } from "../../data/ClientData";
 import { rentHeaderData, rentRowData } from "../../data/DummyData";
 import { tenantHeader } from "../../data/TenantData";
+import { urlToApiCall } from "../../data/UrlForAPICalls";
 import { useAuthentication } from "../../hooks/useAuthentication";
 import { useCreate } from "../../hooks/useCreate";
 import { useUser } from "../../hooks/useUser";
@@ -52,7 +53,7 @@ export const CarbonHomeTabs = () => {
     const callClients = () => {
         try {
             console.log('ICIIIIIIII')
-            axios.get('https://grupo-17-418915.uc.r.appspot.com/api/clients/').then((res) => {
+            axios.get(`${urlToApiCall}api/clients/`).then((res) => {
 
 
                 const apiRows = res.data.clients.map((row: any) => ({ ...row, id: generateId() }));
@@ -89,7 +90,7 @@ export const CarbonHomeTabs = () => {
             console.log('ACAAAAAA')
             // https://grupo-17-418915.uc.r.appspot.com
             // http://localhost:8080
-            axios.get('https://grupo-17-418915.uc.r.appspot.com/api/tenants/').then((res) => {
+            axios.get(`${urlToApiCall}api/tenants/`).then((res) => {
                 const apiRows = res.data.tenant.map((row: any) => ({ ...row, id: generateId() }));
                 const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1)
                 const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any, index: number, self: any[]) => {

@@ -38,6 +38,8 @@ import TenantCreateForm from "../forms/TenantCreateForm";
 import { useCreate } from "../../hooks/useCreate";
 import { useAuthentication } from "../../hooks/useAuthentication";
 import axios from "axios";
+import { urlToApiCall } from "../../data/UrlForAPICalls";
+
 
 export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const initialRows = rowData;
@@ -129,7 +131,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
 
             axios
               .delete(
-                `https://grupo-17-418915.uc.r.appspot.com/api/clients/email/${emailToDelete}`
+                `${urlToApiCall}api/clients/email/${emailToDelete}`
               )
               .then((res) => {
                 console.log(
@@ -170,7 +172,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
 
             axios
               .delete(
-                `https://grupo-17-418915.uc.r.appspot.com/api/tenants/email/${emailToDelete}`
+                `${urlToApiCall}api/tenants/email/${emailToDelete}`
               )
               .then((res) => {
                 console.log(
