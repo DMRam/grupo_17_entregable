@@ -113,9 +113,9 @@ export const CarbonHeader = ({ name }: Props) => {
                                 {/* <SideNavMenuItem onClick={() => { onNewTab('Nuevo Arriendo') }} >
                                     Nuevo Arriendo
                                 </SideNavMenuItem> */}
-                                <SideNavMenuItem onClick={() => { onNewTab('Nuevo Cliente') }} >
+                                {/* <SideNavMenuItem onClick={() => { onNewTab('Nuevo Cliente') }} >
                                     Nuevo Propietario
-                                </SideNavMenuItem>
+                                </SideNavMenuItem> */}
                                 {/* <SideNavMenuItem onClick={() => { onNewTab('Nueva Propiedad') }} >
                                     Nueva Propiedad
                                 </SideNavMenuItem> */}

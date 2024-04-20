@@ -10,7 +10,6 @@ import TenantCreateForm from '../forms/TenantCreateForm';
 import { ClientCreateForm } from '../forms/ClientCreateForm';
 import { PropertyCreateForm } from '../forms/PropertyCreateForm';
 import { RentalCreateForm } from '../forms/RentalCreateForm';
-import { useRefresh } from '../../provider/RefreshProvider';
 
 interface Props {
     contained?: any;
