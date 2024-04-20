@@ -37,9 +37,8 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate()
     const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission, onSubmissionDoRefresh } = useCreate();
+    const [showAlert, setShowAlert] = useState(false); // State to control alert display
 
-
-    console.log(emailFromUpdateButton + " emailFromUpdateButton $%%%$%^%$$$$")
 
     const handleFileUpload = (files: any) => {
         if (files.length > 0) {
@@ -60,17 +59,27 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
         }));
     };
 
-    console.log(indexRendered + " indexRendered")
-
-
     // Set up global axios interceptor for error handling
     axios.interceptors.response.use(
         (response) => response,
         (error) => {
-            console.error('HTTP request error:', error);
+            if (error.response && error.response.status === 403) {
+                setShowAlert(true);
+                const confirmMessage = "Este usuario se encuentra bloqueado, por favor contacte al equipo de administración";
+                if (window.confirm(confirmMessage)) {
+                    // setShowAlert(false); 
+                    return Promise.resolve(); 
+                }
+                return Promise.reject(error); 
+            } else {
+                console.error('HTTP request error:', error);
+                // Handle other errors if needed
+            }
             return Promise.reject(error);
         }
     );
+
+
 
     const onSubmitCreateTenant = async (event: any) => {
         event.preventDefault();
@@ -90,17 +99,16 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
             if (existingTenant && existingTenant.email === emailToSubmitAPI) {
                 const confirmMessage = `Este arrendatario ya existe. ¿Desea actualizarlo?`;
                 if (window.confirm(confirmMessage)) {
-                    await updateExistingTenant(existingTenant);
+                    await updateExistingTenant(event, existingTenant);
                     onSubmissionDoRefresh();
                 }
             } else {
                 const confirmMessageAccept = `¿Desea crear un nuevo Arrendatario con estos detalles?`;
                 if (window.confirm(confirmMessageAccept)) {
-                    await createNewTenant()
-                    
+                    await createNewTenant(event)
+
                 }
             }
-
 
             resetForm();
             onSubmitFormTabIndexToRemove(indexRendered);
@@ -119,28 +127,44 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
 
 
 
-    const updateExistingTenant = async (existingTenant: any) => {
-        console.log("updateExistingTenant ----> " + JSON.stringify(existingTenant))
+    const updateExistingTenant = async (event: any, existingTenant: any) => {
+        event.preventDefault(); // Prevent default form submission behavior
+
         try {
-            await axios.put(`${urlToApiCall}api/tenants/${existingTenant.uid}`, {
+            const response = await axios.put(`${urlToApiCall}api/tenants/${existingTenant.uid}`, {
                 ...existingTenant,
-                brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.uid],
+                brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.email],
                 name: tenant.name
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
-            console.log("Tenant updated successfully.");
+            console.log(response + " !!!!!!!!!!!!")
+            if (response.status === 200) {
+                console.log("Tenant updated successfully.");
+                onSubmitFormTabIndexToRemove(indexRendered);
+                onIsSubmission();
+            } else if (response.status === 403) {
+                console.log("User is blocked. Please contact the admin team.");
+                setShowAlert(true); // Set state to display alert
+            } else {
+                console.log("Unexpected response status:", response.status);
+                setShowAlert(true); // Set state to display alert for unexpected response status
+            }
         } catch (error) {
             console.error("Error updating existing tenant:", error);
-            // Handle error
+            setShowAlert(true); // Set state to display alert for error
         }
     };
 
-    const createNewTenant = async () => {
+
+
+
+    const createNewTenant = async (event: any) => {
+        event.preventDefault(); // Prevent default form submission behavior
         try {
             const response = await axios.post(`${urlToApiCall}api/tenants/`, {
                 ...tenant,
-                brokerIdAssociated: [userLoggedGlobal.uid],
+                brokerIdAssociated: [userLoggedGlobal.email],
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
@@ -293,6 +317,8 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
                 </Stack>
                 {submitting && <Loading description="Submitting..." />}
             </Form>
+
+
         </div>
     );
 };
