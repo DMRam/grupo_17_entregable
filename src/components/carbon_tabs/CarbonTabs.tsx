@@ -26,7 +26,7 @@ export const removeTab = (indexToRemove: number, tabList?: any, setTabList?: any
 export const CarbonTabs = ({ contained }: Props) => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const { userLoggedGlobal, onAddUserLoggedToGlobalAppState } = useUser();
-    const { addedTab, onRemovingTabs, getIndexToRemoveFromSubmitForm, isSubmission, indexToRemoveFormSubmission } = useCreate();
+    const { addedTab, onRemovingTabs, getIndexToRemoveFromSubmitForm, isSubmission, indexToRemoveFormSubmission, triggerRefresh } = useCreate();
 
     useEffect(() => {
         const storedUserString = localStorage.getItem('user');
@@ -86,15 +86,11 @@ export const CarbonTabs = ({ contained }: Props) => {
             onRemovingTabsFromTabs(indexToRemoveFormSubmission)
         }
     }, [isSubmission])
+    console.log(isSubmission + " $$$$$$$$")
 
     const onRemovingTabsFromTabs = (index: number) => {
         removeTab(index, tabList, setTabList, onRemovingTabs)
     }
-
-    tabList.map(item => {
-
-        console.log(item.fromCreateGrid + " ########")
-    })
 
     return (
         <>

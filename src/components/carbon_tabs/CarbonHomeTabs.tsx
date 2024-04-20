@@ -34,7 +34,6 @@ export const CarbonHomeTabs = () => {
     useEffect(() => {
         setRefreshTrigger(!refreshTrigger)
     }, []);
-    console.log(refreshTrigger + " $$$$$$$$")
 
 
     useEffect(() => {

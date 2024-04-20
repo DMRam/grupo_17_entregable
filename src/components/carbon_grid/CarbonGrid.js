@@ -51,6 +51,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const { isUserLoggedOut } = useAuthentication();
   const [brokerInfo, setBrokerInfo] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const { onIsSubmission } = useCreate();
 
   const [state, setState] = useState({
     rows: initialRows,
@@ -225,6 +226,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
               fromCreateGrid: true,
               email: emailToUpdate,
             };
+            onIsSubmission()
             onCreateNewTab(newTab);
           }
         });
@@ -241,6 +243,7 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
           fromCreateGrid: true,
           email: emailToUpdate,
         };
+        onIsSubmission()
         onCreateNewTab(newTab);
       }
     });
@@ -273,8 +276,6 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
 
     return "Test";
   };
-
-  console.log(rowData + " GRID");
 
   return (
     <div className={styles.gridContainer}>

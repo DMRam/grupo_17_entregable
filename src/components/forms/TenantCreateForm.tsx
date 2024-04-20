@@ -68,9 +68,9 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
                 const confirmMessage = "Este usuario se encuentra bloqueado, por favor contacte al equipo de administración";
                 if (window.confirm(confirmMessage)) {
                     // setShowAlert(false); 
-                    return Promise.resolve(); 
+                    return Promise.resolve();
                 }
-                return Promise.reject(error); 
+                return Promise.reject(error);
             } else {
                 console.error('HTTP request error:', error);
                 // Handle other errors if needed
@@ -136,8 +136,7 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
                 brokerIdAssociated: [...existingTenant.brokerIdAssociated, userLoggedGlobal.email],
                 name: tenant.name
             });
-            onSubmitFormTabIndexToRemove(indexRendered);
-            onIsSubmission()
+
             console.log(response + " !!!!!!!!!!!!")
             if (response.status === 200) {
                 console.log("Tenant updated successfully.");
@@ -150,9 +149,13 @@ const TenantCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: Props) 
                 console.log("Unexpected response status:", response.status);
                 setShowAlert(true); // Set state to display alert for unexpected response status
             }
+            onSubmitFormTabIndexToRemove(indexRendered);
+            onIsSubmission()
+            console.log("WAS SUBMISSION")
         } catch (error) {
             console.error("Error updating existing tenant:", error);
             setShowAlert(true); // Set state to display alert for error
+            onIsSubmission()
         }
     };
 
