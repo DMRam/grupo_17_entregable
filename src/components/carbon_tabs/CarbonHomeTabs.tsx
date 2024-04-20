@@ -34,7 +34,6 @@ export const CarbonHomeTabs = () => {
     useEffect(() => {
         setRefreshTrigger(!refreshTrigger)
     }, []);
-    console.log(refreshTrigger + " $$$$$$$$")
 
 
     useEffect(() => {
@@ -121,7 +120,7 @@ export const CarbonHomeTabs = () => {
                 {/* <Tab>Gestión de Ventas</Tab> */}
                 {/* <Tab>Gestión de Propiedades</Tab> */}
                 <Tab>Gestión de Arrendatarios</Tab>
-                <Tab>Gestión de Propietarios</Tab>
+                {/* <Tab>Gestión de Propietarios</Tab> */}
                 {/* <Tab disabled>Settings</Tab> */}
             </TabList>
             <TabPanels>
@@ -137,7 +136,7 @@ export const CarbonHomeTabs = () => {
                     rowData={rowsFromApi}
                     headerData={tenantHeader}
                 /></TabPanel>
-                <TabPanel><CarbonGrid name={'Gestión de Propietarios'} objectName={'Nuevo Cliente'} rowData={clientRowsFromApi} headerData={tenantHeader} /></TabPanel>
+                {/* <TabPanel><CarbonGrid name={'Gestión de Propietarios'} objectName={'Nuevo Cliente'} rowData={clientRowsFromApi} headerData={tenantHeader} /></TabPanel> */}
                 {/* <TabPanel>Tab Panel 4</TabPanel> */}
             </TabPanels>
             {/* </div> */}
