@@ -24,6 +24,10 @@ import {
   Button,
   OverflowMenuItem,
   OverflowMenu,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@carbon/react";
 import {
   Download,
@@ -40,12 +44,13 @@ import { useAuthentication } from "../../hooks/useAuthentication";
 import axios from "axios";
 import { urlToApiCall } from "../../data/UrlForAPICalls";
 
-
 export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const initialRows = rowData;
   const initialHeaders = headerData;
   const [selectedRows, setSelectedRows] = useState([]);
   const { isUserLoggedOut } = useAuthentication();
+  const [brokerInfo, setBrokerInfo] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [state, setState] = useState({
     rows: initialRows,
@@ -87,23 +92,25 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
   const onDeleteSelectedRowsFromUIGrid = (selectedRows) => {
     console.log("Selected Rows Before Deletion:", selectedRows.length);
 
-    const updatedRows = state.rows.filter(
-      (row) => !selectedRows.some((selectedRow) => selectedRow.id === row.id)
-    );
+    if (!showDeleteConfirmation) {
+      const updatedRows = state.rows.filter(
+        (row) => !selectedRows.some((selectedRow) => selectedRow.id === row.id)
+      );
 
-    console.log("Updated Rows After Deletion:", updatedRows.length);
+      console.log("Updated Rows After Deletion:", updatedRows.length);
 
-    setState((prevState) => ({
-      ...prevState,
-      rows: updatedRows,
-    }));
+      setState((prevState) => ({
+        ...prevState,
+        rows: updatedRows,
+      }));
 
-    setSelectedRows((prevSelectedRows) =>
-      prevSelectedRows.filter((selectedRow) =>
-        updatedRows.some((row) => row.id === selectedRow.id)
-      )
-    );
-    console.log("Selected Rows After Deletion:", selectedRows);
+      setSelectedRows((prevSelectedRows) =>
+        prevSelectedRows.filter((selectedRow) =>
+          updatedRows.some((row) => row.id === selectedRow.id)
+        )
+      );
+      console.log("Selected Rows After Deletion:", selectedRows);
+    }
   };
 
   const triggerRightFunctionForDelete = (objectName, selectedRows) => {
@@ -128,21 +135,21 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
           let emailToDelete = "";
           if (inItem.value.includes("@")) {
             emailToDelete = inItem.value;
-
-            axios
-              .delete(
-                `${urlToApiCall}api/clients/email/${emailToDelete}`
-              )
-              .then((res) => {
-                console.log(
-                  `User with email ${emailToDelete} was deleted successfully`
-                );
-                console.log(res);
-                onDeleteSelectedRowsFromUIGrid(selectedRows);
-              })
-              .catch((error) => {
-                console.log("Error removing the user selected:", error);
-              });
+            confirmDelete();
+            if (!showDeleteConfirmation) {
+              axios
+                .delete(`${urlToApiCall}api/clients/email/${emailToDelete}`)
+                .then((res) => {
+                  console.log(
+                    `User with email ${emailToDelete} was deleted successfully`
+                  );
+                  console.log(res);
+                  onDeleteSelectedRowsFromUIGrid(selectedRows);
+                })
+                .catch((error) => {
+                  console.log("Error removing the user selected:", error);
+                });
+            }
           }
         });
       });
@@ -169,21 +176,21 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
           let emailToDelete = "";
           if (inItem.value.includes("@")) {
             emailToDelete = inItem.value;
-
-            axios
-              .delete(
-                `${urlToApiCall}api/tenants/email/${emailToDelete}`
-              )
-              .then((res) => {
-                console.log(
-                  `User with email ${emailToDelete} was deleted successfully`
-                );
-                console.log(res);
-                onDeleteSelectedRowsFromUIGrid(selectedRows);
-              })
-              .catch((error) => {
-                console.log("Error removing the user selected:", error);
-              });
+            confirmDelete();
+            if (!showDeleteConfirmation) {
+              axios
+                .delete(`${urlToApiCall}api/tenants/email/${emailToDelete}`)
+                .then((res) => {
+                  console.log(
+                    `User with email ${emailToDelete} was deleted successfully`
+                  );
+                  console.log(res);
+                  onDeleteSelectedRowsFromUIGrid(selectedRows);
+                })
+                .catch((error) => {
+                  console.log("Error removing the user selected:", error);
+                });
+            }
           }
         });
       });
@@ -196,30 +203,46 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
     setSelectedRows([]); // Clear selected rows after deletion
   };
 
-  const onUpdate = (objectName, selectedRows) => {
-    selectedRows.map((item) => {
-      console.log(item.cells);
-      item.cells.map((inItem) => {
-        console.log(inItem.value);
-        let emailToUpdate = "";
-        if (inItem.value.includes("@")) {
-          emailToUpdate = inItem.value;
+  const confirmDelete = () => {
+    setShowDeleteConfirmation(!showDeleteConfirmation);
+  };
 
-          console.log(emailToUpdate + " <-------------");
-          // pass emaillet panelBasedOnLabel = <></>; // Default empty panel
-          let panelBasedOnLabel = <></>; // Default empty panel
-          const newTab = {
-            label: objectName,
-            panel: panelBasedOnLabel,
-            icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
-            disabled: false, // or true based on your requirements
-            fromCreateGrid: true,
-            email: emailToUpdate,
-          };
-          // Assuming onCreateNewTab is a function to handle tab creation in Redux
-          onCreateNewTab(newTab);
-        }
-      });
+  const onUpdate = (objectName, selectedRows) => {
+    selectedRows.forEach((item) => {
+      let emailToUpdate = "";
+      if (
+        Array.isArray(item.cells[1].value) &&
+        item.cells[1].value.length > 0
+      ) {
+        item.cells[1].value.forEach((inItem) => {
+          if (inItem.includes("@")) {
+            emailToUpdate = inItem;
+            const newTab = {
+              label: objectName,
+              panel: <></>, // Default empty panel
+              icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
+              disabled: false, // or true based on your requirements
+              fromCreateGrid: true,
+              email: emailToUpdate,
+            };
+            onCreateNewTab(newTab);
+          }
+        });
+      } else if (
+        typeof item.cells[1].value === "string" &&
+        item.cells[1].value.includes("@")
+      ) {
+        emailToUpdate = item.cells[1].value;
+        const newTab = {
+          label: objectName,
+          panel: <></>, // Default empty panel
+          icon: () => <IntentRequestCreate />, // Use your icon component or an empty fragment
+          disabled: false, // or true based on your requirements
+          fromCreateGrid: true,
+          email: emailToUpdate,
+        };
+        onCreateNewTab(newTab);
+      }
     });
   };
 
@@ -235,6 +258,20 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
 
     // Assuming onCreateNewTab is a function to handle tab creation in Redux
     onCreateNewTab(newTenantTab);
+  };
+
+  const onDisplayBrokerInfo = async (uid) => {
+    console.log(typeof uid + " <=======");
+    // http://localhost:8080/api/users/uid/6611b07451eb4e5fb87970f4
+    // brokerIdAssociated
+    // uid.map(item => {console.log(item)})
+    const response = await axios.get(`${urlToApiCall}${uid}`).then((resp) => {
+      console.log(JSON.stringify(resp.data));
+    });
+
+    // console.log("RESPONSE BROKER " + response.data.user);
+
+    return "Test";
   };
 
   console.log(rowData + " GRID");
@@ -348,7 +385,14 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
                         {row.cells.map((cell) => (
                           <TableCell key={cell.id}>
                             {!React.isValidElement(cell.value) && (
-                              <div>{cell.value}</div>
+                              <div>
+                                {
+                                  // cell.id.includes("brokerIdAssociated")
+                                  //   ? onDisplayBrokerInfo(cell.value)
+                                  //   : cell.value
+                                  cell.value
+                                }
+                              </div>
                             )}
                           </TableCell>
                         ))}
@@ -362,6 +406,19 @@ export const CarbonGrid = ({ name, objectName, rowData, headerData }) => {
           );
         }}
       />
+
+      <Modal
+        open={showDeleteConfirmation}
+        modalHeading="Confirm Delete"
+        primaryButtonText="Delete"
+        secondaryButtonText="Cancel"
+        onRequestSubmit={confirmDelete}
+        onRequestClose={() => setShowDeleteConfirmation(false)}
+      >
+        <ModalBody>
+          Are you sure you want to delete the selected rows?
+        </ModalBody>
+      </Modal>
     </div>
   );
 };

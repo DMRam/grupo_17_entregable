@@ -47,6 +47,7 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate()
     const { addedTab, onRemovingTabs, onSubmitFormTabIndexToRemove, onIsSubmission, onSubmissionDoRefresh } = useCreate();
+    const [showAlert, setShowAlert] = useState(false); // State to control alert display
 
 
 
@@ -73,7 +74,18 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
     axios.interceptors.response.use(
         (response) => response,
         (error) => {
-            console.error('HTTP request error:', error);
+            if (error.response && error.response.status === 403) {
+                setShowAlert(true);
+                const confirmMessage = "Este usuario se encuentra bloqueado, por favor contacte al equipo de administración";
+                if (window.confirm(confirmMessage)) {
+                    // setShowAlert(false); 
+                    return Promise.resolve();
+                }
+                return Promise.reject(error);
+            } else {
+                console.error('HTTP request error:', error);
+                // Handle other errors if needed
+            }
             return Promise.reject(error);
         }
     );
@@ -96,14 +108,14 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
             if (existingClient && existingClient.email === emailToSubmitAPI) {
                 const confirmMessage = `Este cliente ya existe. ¿Desea actualizarlo?`;
                 if (window.confirm(confirmMessage)) {
-                    await updateExistingClient(existingClient);
+                    await updateExistingClient(event, existingClient);
                     onSubmissionDoRefresh();
                 }
             } else {
                 const confirmMessageAccept = `¿Desea crear un nuevo cliente con estos detalles?`;
                 if (window.confirm(confirmMessageAccept)) {
                     await createNewClient();
-                    
+
                 }
             }
 
@@ -121,19 +133,22 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
     };
 
 
-    const updateExistingClient = async (existingClient: any) => {
+    const updateExistingClient = async (event: any, existingClient: any) => {
+        event.preventDefault(); // Prevent default form submission behavior
+
         try {
             await axios.put(`${urlToApiCall}api/clients/${existingClient.uid}`, {
                 ...existingClient,
-                brokerIdAssociated: [...existingClient.brokerIdAssociated, userLoggedGlobal.uid],
+                brokerIdAssociated: [...existingClient.brokerIdAssociated, userLoggedGlobal.email],
                 name: client.name
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()
             console.log("Client updated successfully.");
+
         } catch (error) {
             console.error("Error updating existing client:", error);
-            // Handle error
+            setShowAlert(true); // Set state to display alert for error
         }
     };
 
@@ -141,7 +156,7 @@ export const ClientCreateForm = ({ indexRendered, emailFromUpdateButton = '' }: 
         try {
             const response = await axios.post(`${urlToApiCall}api/clients/`, {
                 ...client,
-                brokerIdAssociated: [userLoggedGlobal.uid],
+                brokerIdAssociated: [userLoggedGlobal.email],
             });
             onSubmitFormTabIndexToRemove(indexRendered);
             onIsSubmission()

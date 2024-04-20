@@ -52,14 +52,12 @@ export const CarbonHomeTabs = () => {
 
     const callClients = () => {
         try {
-            console.log('ICIIIIIIII')
+
             axios.get(`${urlToApiCall}api/clients/`).then((res) => {
-
-
                 const apiRows = res.data.clients.map((row: any) => ({ ...row, id: generateId() }));
                 const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1);
                 const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any) => {
-                    return row.brokerIdAssociated.includes(userLoggedGlobal.uid) && noEmptyRows.findIndex((r: { brokerIdAssociated: any; }) => r.brokerIdAssociated === row.brokerIdAssociated);
+                    return row.brokerIdAssociated.includes(userLoggedGlobal.email) && noEmptyRows.findIndex((r: { brokerIdAssociated: any; }) => r.brokerIdAssociated === row.brokerIdAssociated);
                 });
 
                 const removeDuplicationFromBrokerUidApiNotEmptyRows = brokerUidApiNotEmptyRows.map((item: { brokerIdAssociated: Iterable<unknown> | null | undefined; }) => ({
@@ -87,14 +85,12 @@ export const CarbonHomeTabs = () => {
     const callTenants = () => {
         try {
 
-            console.log('ACAAAAAA')
-            // https://grupo-17-418915.uc.r.appspot.com
-            // http://localhost:8080
             axios.get(`${urlToApiCall}api/tenants/`).then((res) => {
                 const apiRows = res.data.tenant.map((row: any) => ({ ...row, id: generateId() }));
                 const noEmptyRows = apiRows.filter((row: {}) => Object.keys(row).length > 1)
                 const brokerUidApiNotEmptyRows = noEmptyRows.filter((row: any, index: number, self: any[]) => {
-                    return row.brokerIdAssociated.includes(userLoggedGlobal.uid) && self.findIndex((r) => r.brokerIdAssociated === row.brokerIdAssociated) === index;
+                    return row.brokerIdAssociated.includes(userLoggedGlobal.email)
+                     && self.findIndex((r) => r.brokerIdAssociated === row.brokerIdAssociated) === index;
                 });
 
                 const removeDuplicationFromBrokerUidApiNotEmptyRows = brokerUidApiNotEmptyRows.map((item: { brokerIdAssociated: Iterable<unknown> | null | undefined; }) => ({
