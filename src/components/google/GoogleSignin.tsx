@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
+// import { GOOGLE_CLIENT_ID } from "../../api/keys/ApiKeys";
 import { urlToApiCall } from "../../data/UrlForAPICalls";
 import { useAuthentication } from "../../hooks/useAuthentication";
 import { useUser } from "../../hooks/useUser";
@@ -59,7 +59,7 @@ export const GoogleSignIn = () => {
   useEffect(() => {
     const googleSigninElement = document.querySelector(".g_id_signin");
     window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
+      // client_id: GOOGLE_CLIENT_ID,
       callback: handleCredentialResponse,
     });
     window.google.accounts.id.renderButton(googleSigninElement, {

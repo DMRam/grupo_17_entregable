@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosInstanceAuth from '../../api/axios/ImmAxios';
 import { useAuthentication } from '../../hooks/useAuthentication';
 import { useUser } from '../../hooks/useUser';
-import { GoogleSignIn } from '../google/GoogleSignin';
+// import { GoogleSignIn } from '../google/GoogleSignin';
 import './imm_login.css'; // Assuming Bootstrap CSS is already imported
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios';
@@ -82,7 +82,7 @@ export const ImmLandingForm = () => {
                     </button>
                 </div>
 
-                <GoogleSignIn />
+                {/* <GoogleSignIn /> */}
                 <div className="text-center">
                     <Link to="/signup" className="link">
                         Register
